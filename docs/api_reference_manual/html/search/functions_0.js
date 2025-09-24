@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['cy_5fsvc_5fhp_5fdeinit_0',['cy_svc_hp_deinit',['../group__group__svc__hp__functions.html#gaf90c3163a25855fdd536a3c7c96de5df',1,'cy_staged_voice_control_hp.h']]],
+  ['cy_5fsvc_5fhp_5fget_5fcurrent_5fstage_1',['cy_svc_hp_get_current_stage',['../group__group__svc__hp__functions.html#ga27a8c736dc3cf0d8b89d9546fbce665f',1,'cy_staged_voice_control_hp.h']]],
+  ['cy_5fsvc_5fhp_5finit_2',['cy_svc_hp_init',['../group__group__svc__hp__functions.html#gafab8df119d7e17cce213196a1db14d81',1,'cy_staged_voice_control_hp.h']]],
+  ['cy_5fsvc_5fhp_5fipc_5fpost_5frecv_5fhook_3',['cy_svc_hp_ipc_post_recv_hook',['../group__group__svc__hp__functions.html#ga34f85a635063ae820170bf079c244b88',1,'cy_staged_voice_control_hp.h']]],
+  ['cy_5fsvc_5fhp_5fipc_5fpost_5fsend_5fhook_4',['cy_svc_hp_ipc_post_send_hook',['../group__group__svc__hp__functions.html#gae5eae6045089526ce8cda7c65e323ce7',1,'cy_staged_voice_control_hp.h']]],
+  ['cy_5fsvc_5fhp_5fipc_5fpre_5fsend_5fhook_5',['cy_svc_hp_ipc_pre_send_hook',['../group__group__svc__hp__functions.html#gac147b3f5197886a180a8636f75b73c84',1,'cy_staged_voice_control_hp.h']]],
+  ['cy_5fsvc_5fhp_5fset_5fstate_6',['cy_svc_hp_set_state',['../group__group__svc__hp__functions.html#gac07c4413a6603d6646a3eb071d204ef2',1,'cy_staged_voice_control_hp.h']]],
+  ['cy_5fsvc_5flp_5fdeinit_7',['cy_svc_lp_deinit',['../group__group__svc__lp__functions.html#gaf5550c30d30fce6157f518cde60c8dd6',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5ffeed_8',['cy_svc_lp_feed',['../group__group__svc__lp__functions.html#gaa766016309e27157bee309f3b1db0314',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fget_5fcurrent_5fstage_9',['cy_svc_lp_get_current_stage',['../group__group__svc__lp__functions.html#ga639a531a956e73e54173dc904708cb30',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5finit_10',['cy_svc_lp_init',['../group__group__svc__lp__functions.html#gacc5a7dcd822f5f8f561ac98f3880f155',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fipc_5fpost_5frecv_5fhook_11',['cy_svc_lp_ipc_post_recv_hook',['../group__group__svc__lp__functions.html#ga8a769fdf715aecbbdf143af0a9773de4',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fipc_5fpost_5fsend_5fhook_12',['cy_svc_lp_ipc_post_send_hook',['../group__group__svc__lp__functions.html#gad4b642803cd91390d7477e6286c12acc',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fipc_5fpre_5fsend_5fhook_13',['cy_svc_lp_ipc_pre_send_hook',['../group__group__svc__lp__functions.html#ga93c6e9d3aa2624c70c41c1b2232d37ab',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fset_5fhp_5fcore_5finfo_14',['cy_svc_lp_set_hp_core_info',['../group__group__svc__lp__functions.html#gafe61da85a68d438487e8b31ca8ff8730',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fset_5fstage_15',['cy_svc_lp_set_stage',['../group__group__svc__lp__functions.html#ga3d34f860e974aa8241174a25754a0aac',1,'cy_staged_voice_control_lp.h']]]
+];
