@@ -14,6 +14,7 @@ var searchData=
   ['cy_5fsvc_5flp_5fipc_5fpost_5frecv_5fhook_11',['cy_svc_lp_ipc_post_recv_hook',['../group__group__svc__lp__functions.html#ga8a769fdf715aecbbdf143af0a9773de4',1,'cy_staged_voice_control_lp.h']]],
   ['cy_5fsvc_5flp_5fipc_5fpost_5fsend_5fhook_12',['cy_svc_lp_ipc_post_send_hook',['../group__group__svc__lp__functions.html#gad4b642803cd91390d7477e6286c12acc',1,'cy_staged_voice_control_lp.h']]],
   ['cy_5fsvc_5flp_5fipc_5fpre_5fsend_5fhook_13',['cy_svc_lp_ipc_pre_send_hook',['../group__group__svc__lp__functions.html#ga93c6e9d3aa2624c70c41c1b2232d37ab',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5fset_5fhp_5fcore_5finfo_14',['cy_svc_lp_set_hp_core_info',['../group__group__svc__lp__functions.html#gafe61da85a68d438487e8b31ca8ff8730',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5fset_5fstage_15',['cy_svc_lp_set_stage',['../group__group__svc__lp__functions.html#ga3d34f860e974aa8241174a25754a0aac',1,'cy_staged_voice_control_lp.h']]]
+  ['cy_5fsvc_5flp_5flow_5fnoise_5fconfig_14',['cy_svc_lp_low_noise_config',['../group__group__svc__lp__functions.html#ga024e9824090e13fb703d5fb68bb28c96',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fset_5fhp_5fcore_5finfo_15',['cy_svc_lp_set_hp_core_info',['../group__group__svc__lp__functions.html#gafe61da85a68d438487e8b31ca8ff8730',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fset_5fstage_16',['cy_svc_lp_set_stage',['../group__group__svc__lp__functions.html#ga3d34f860e974aa8241174a25754a0aac',1,'cy_staged_voice_control_lp.h']]]
 ];

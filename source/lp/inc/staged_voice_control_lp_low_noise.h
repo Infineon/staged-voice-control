@@ -28,13 +28,8 @@
  * thereof can reasonably be expected to result in personal injury.
  */
 
-/**
- * @file staged_voice_control_lp_stages.h
- *
- */
-
-#ifndef CY_SVC_LP_STAGES_H__
-#define CY_SVC_LP_STAGES_H__
+#ifndef __STAGED_VOICE_CONTROL_LP_LOW_NOISE_H__
+#define __STAGED_VOICE_CONTROL_LP_LOW_NOISE_H__
 
 #ifdef __cplusplus
 extern "C"
@@ -42,12 +37,19 @@ extern "C"
 #endif
 
 #ifdef ENABLE_SVC_LP_MW
-
+/*******************************************************************************
+ *                              Includes
+ ******************************************************************************/
 #include "staged_voice_control_lp_private.h"
+#include "staged_voice_control_lp_sod.h"
+#include "cy_lpwwd_defines.h"
 
 /*******************************************************************************
  *                              Macros
  ******************************************************************************/
+#ifndef CY_SVC_MIN_SUPPORTED_TIMEOUT_MS
+#define CY_SVC_MIN_SUPPORTED_TIMEOUT_MS    (2000) /* 2sec */
+#endif
 
 /*******************************************************************************
  *                              Constants
@@ -73,27 +75,44 @@ extern "C"
  *                              Function Declarations
  ******************************************************************************/
 
-cy_rslt_t svc_lp_trigger_state(
-        svc_lp_instance_t *lp_instance,
-        svc_stage_trigger_t stage_trigger);
+/**
+ * @brief Detects low noise conditions in a mono audio frame
+ *
+ * @param mono_audio_frame Pointer to the mono audio frame data buffer containing 16-bit signed audio samples
+ *
+ * @return true if low noise is detected in the audio frame, false otherwise
+ *
+ * @note This function analyzes the provided audio frame to determine if the noise level
+ *       is below a certain threshold, which may be used for voice activity detection
+ *       or audio processing optimization in staged voice control systems.
+ */
 
-cy_rslt_t svc_lp_send_event_to_app_on_stage_change(
-        svc_lp_instance_t *lp_instance,
-        svc_stage_trigger_t state_trigger);
+bool svc_lp_low_noise_detected(int16_t* mono_audio_frame);
 
-cy_rslt_t svc_lp_trigger_state_from_hp_set_state(
-        svc_lp_instance_t *lp_instance,
-        cy_svc_set_state_t  set_state,
-        void *set_state_info);
+/**
+ * @brief Configure low noise parameters for staged voice control low power mode
+ *
+ * This function configures the low noise detection feature for the staged voice control
+ * system operating in low power mode. It sets the timeout period, noise threshold level,
+ * and enables or disables the low noise detection feature.
+ *
+ * @param[in] timeout_ms        Timeout period in milliseconds for low noise detection
+ * @param[in] low_noise_threshold  Threshold level for determining low noise conditions
+ * @param[in] enable_feature    Flag to enable (true) or disable (false) the low noise feature
+ *
+ * @return cy_rslt_t           Result code indicating success or failure
+ * @retval CY_RSLT_SUCCESS     Configuration completed successfully
+ * @retval CY_RSLT_TYPE_ERROR  Invalid parameter provided
+ *
+ * @note This function should be called before enabling the staged voice control system
+ * @warning Ensure timeout_ms is within valid range to prevent system instability
+ */
+cy_rslt_t svc_lp_low_noise_config(uint32_t timeout_ms, uint32_t low_noise_threshold, bool enable_feature);
 
-cy_rslt_t svc_lp_trigger_stage_from_lp_app_set_stage (
-        svc_lp_instance_t *lp_instance,
-        cy_svc_stage_t   set_stage);
+#endif /* ENABLE_SVC_LP_MW */
 
-#ifdef ENABLE_TIMELINE_MARKER
-cy_rslt_t svc_lp_trigger_audio_timeline_marker_update (
-        svc_stage_trigger_t stage_trigger);
+#ifdef __cplusplus
+}
 #endif
 
-#endif
-#endif /* CY_SVC_LP_STAGES_H__ */
+#endif // __STAGED_VOICE_CONTROL_LP_LOW_NOISE_H__

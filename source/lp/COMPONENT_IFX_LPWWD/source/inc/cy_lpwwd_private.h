@@ -71,11 +71,11 @@ extern "C"
 
 #if ENABLE_LPWWD_LOGS == 2
 #define cy_lpwwd_log_info(format,...)  printf ("[LPWWD] "format" \r\n",##__VA_ARGS__);
-#define cy_lpwwd_log_err(ret_val,format,...)  printf ("[LPWWD] [Err:0x%x, %s:%d] "format" \r\n",(unsigned int)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
+#define cy_lpwwd_log_err(ret_val,format,...)  printf ("[LPWWD] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
 #define cy_lpwwd_log_dbg(format,...)  printf ("[LPWWD] "format" \r\n",##__VA_ARGS__);
 #elif ENABLE_LPWWD_LOGS == 1
 #define cy_lpwwd_log_info(format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[LPWWD] "format" \r\n",##__VA_ARGS__);
-#define cy_lpwwd_log_err(ret_val,format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_ERR,"[LPWWD] [Err:0x%x] "format" \r\n",(unsigned int)ret_val,##__VA_ARGS__);
+#define cy_lpwwd_log_err(ret_val,format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_ERR,"[LPWWD] [Err:0x%"PRIx32"] "format" \r\n",(uint32_t)ret_val,##__VA_ARGS__);
 #define cy_lpwwd_log_dbg(format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_DEBUG,"[LPWWD] "format" \r\n",##__VA_ARGS__);
 #else
 #define cy_lpwwd_log_info(format,...)

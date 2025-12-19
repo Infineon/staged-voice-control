@@ -28,15 +28,12 @@
  * thereof can reasonably be expected to result in personal injury.
  */
 
-/**
- * @file staged_voice_control_lp_lpwwd.c
- *
- */
-
 #ifdef ENABLE_SVC_LP_MW
+#include "staged_voice_control_lp_low_noise.h"
 
-#include "staged_voice_control_lp_hpwwd.h"
-
+/*******************************************************************************
+ *                              Macros
+ ******************************************************************************/
 /*******************************************************************************
  *                              Macros
  ******************************************************************************/
@@ -52,57 +49,74 @@
 /*******************************************************************************
  *                              Global Variables
  ******************************************************************************/
+static uint32_t low_noise_fixed_threshold = 0; // Default threshold
+static uint32_t silent_frame_timeout_counter = 0; // timeout counter
+static uint32_t silent_frame_max_timeout_counter = 10000; // timeout value in milliseconds - default 10sec
+static bool g_low_noise_feature_enabled = false; // AAD feature enable flag - default disabled
 
 /*******************************************************************************
  *                              Function Declarations
  ******************************************************************************/
-
-
-cy_rslt_t svc_lp_hpwwd_reset(
-        svc_lp_instance_t *lp_instance)
+bool svc_lp_low_noise_detected(int16_t* mono_audio_frame)
 {
-    if (!(lp_instance->init_params.stage_config_list
-            & CY_SVC_ENABLE_HPWWD_STATE_TRANSITIONS))
+    bool is_low_noise_detected = false;
+    bool is_silence_frame = true;
+
+    if (mono_audio_frame == NULL)
     {
-        return CY_RSLT_SUCCESS;
+        cy_svc_log_err(CY_RSLT_SVC_BAD_ARG, "NULL audio frame");
+        return is_low_noise_detected;
     }
 
-    lp_instance->hpwwd_trigger_data_final_address = NULL;
-    lp_instance->post_hpwwd_pending_frame_counter_to_hp = 0;
-    lp_instance->post_wwd_frame_count_req_by_hp = 0;
-
-    return CY_RSLT_SUCCESS;
-}
-
-cy_rslt_t svc_lp_asr_reset(
-        svc_lp_instance_t *lp_instance)
-{
-    if (!(lp_instance->init_params.stage_config_list
-            & CY_SVC_ENABLE_ASR_STATE_TRANSITIONS))
+    if (false == g_low_noise_feature_enabled)
     {
-        return CY_RSLT_SUCCESS;
+        return is_low_noise_detected;
     }
 
-    lp_instance->stream_requested_on_asr_processing_query_state = false;
+    for(uint16_t Idx = 0; Idx < MONO_FRAME_SIZE; Idx++)
+    {
+        /* Check if any value exceeds the AAD threshold */
+        if (abs((int16_t)mono_audio_frame[Idx]) > low_noise_fixed_threshold)
+        {
+            is_silence_frame = false;
+            break;
+        }
+    }
 
-    return CY_RSLT_SUCCESS;
+    if(true == is_silence_frame)
+    {
+        if(silent_frame_timeout_counter >= silent_frame_max_timeout_counter)
+        {
+            is_low_noise_detected = true;
+            silent_frame_timeout_counter = 0;
+        }
+        else
+        {
+            silent_frame_timeout_counter++;
+        }
+    }
+    else
+    {
+        silent_frame_timeout_counter = 0;
+    }
+
+    return is_low_noise_detected;
 }
 
-cy_rslt_t svc_lp_hpwwd_reset_and_high_components(
-        svc_lp_instance_t *lp_instance)
+cy_rslt_t svc_lp_low_noise_config(uint32_t timeout_ms, uint32_t low_noise_threshold, bool enable_feature)
 {
-    (void) svc_lp_hpwwd_reset(lp_instance);
-    (void) svc_lp_asr_reset(lp_instance);
+    if (timeout_ms < CY_SVC_MIN_SUPPORTED_TIMEOUT_MS)
+    {
+        cy_svc_log_err(CY_RSLT_SVC_BAD_ARG, "Invalid timeout_ms:%d", timeout_ms);
+        return CY_RSLT_SVC_BAD_ARG;
+    }
 
+    low_noise_fixed_threshold = low_noise_threshold;
+    silent_frame_max_timeout_counter = timeout_ms/CY_SVC_SUPPORTED_FRAME_TIME_MS;
+    g_low_noise_feature_enabled = enable_feature;
+    cy_svc_log_info("AAD Config: silent_frame_max_timeout_counter:%"PRIu32", Threshold:%"PRIu32", Enable:%s",
+                    silent_frame_max_timeout_counter, low_noise_fixed_threshold, enable_feature ? "true" : "false");
     return CY_RSLT_SUCCESS;
 }
 
-cy_rslt_t svc_lp_asr_reset_and_high_components(
-        svc_lp_instance_t *lp_instance)
-{
-    (void) svc_lp_asr_reset(lp_instance);
-
-    return CY_RSLT_SUCCESS;
-}
-
-#endif
+#endif /* ENABLE_SVC_LP_MW */
