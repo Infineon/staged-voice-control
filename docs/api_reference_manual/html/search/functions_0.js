@@ -9,12 +9,14 @@ var searchData=
   ['cy_5fsvc_5fhp_5fset_5fstate_6',['cy_svc_hp_set_state',['../group__group__svc__hp__functions.html#gac07c4413a6603d6646a3eb071d204ef2',1,'cy_staged_voice_control_hp.h']]],
   ['cy_5fsvc_5flp_5fdeinit_7',['cy_svc_lp_deinit',['../group__group__svc__lp__functions.html#gaf5550c30d30fce6157f518cde60c8dd6',1,'cy_staged_voice_control_lp.h']]],
   ['cy_5fsvc_5flp_5ffeed_8',['cy_svc_lp_feed',['../group__group__svc__lp__functions.html#gaa766016309e27157bee309f3b1db0314',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5fget_5fcurrent_5fstage_9',['cy_svc_lp_get_current_stage',['../group__group__svc__lp__functions.html#ga639a531a956e73e54173dc904708cb30',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5finit_10',['cy_svc_lp_init',['../group__group__svc__lp__functions.html#gacc5a7dcd822f5f8f561ac98f3880f155',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5fipc_5fpost_5frecv_5fhook_11',['cy_svc_lp_ipc_post_recv_hook',['../group__group__svc__lp__functions.html#ga8a769fdf715aecbbdf143af0a9773de4',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5fipc_5fpost_5fsend_5fhook_12',['cy_svc_lp_ipc_post_send_hook',['../group__group__svc__lp__functions.html#gad4b642803cd91390d7477e6286c12acc',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5fipc_5fpre_5fsend_5fhook_13',['cy_svc_lp_ipc_pre_send_hook',['../group__group__svc__lp__functions.html#ga93c6e9d3aa2624c70c41c1b2232d37ab',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5flow_5fnoise_5fconfig_14',['cy_svc_lp_low_noise_config',['../group__group__svc__lp__functions.html#ga024e9824090e13fb703d5fb68bb28c96',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5fset_5fhp_5fcore_5finfo_15',['cy_svc_lp_set_hp_core_info',['../group__group__svc__lp__functions.html#gafe61da85a68d438487e8b31ca8ff8730',1,'cy_staged_voice_control_lp.h']]],
-  ['cy_5fsvc_5flp_5fset_5fstage_16',['cy_svc_lp_set_stage',['../group__group__svc__lp__functions.html#ga3d34f860e974aa8241174a25754a0aac',1,'cy_staged_voice_control_lp.h']]]
+  ['cy_5fsvc_5flp_5fgain_5fconfig_9',['cy_svc_lp_gain_config',['../group__group__svc__lp__functions.html#ga10524a88d8b2f99b99f9087855419e1b',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fget_5fcurrent_5fstage_10',['cy_svc_lp_get_current_stage',['../group__group__svc__lp__functions.html#ga639a531a956e73e54173dc904708cb30',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5finit_11',['cy_svc_lp_init',['../group__group__svc__lp__functions.html#gacc5a7dcd822f5f8f561ac98f3880f155',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fipc_5fpost_5frecv_5fhook_12',['cy_svc_lp_ipc_post_recv_hook',['../group__group__svc__lp__functions.html#ga8a769fdf715aecbbdf143af0a9773de4',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fipc_5fpost_5fsend_5fhook_13',['cy_svc_lp_ipc_post_send_hook',['../group__group__svc__lp__functions.html#gad4b642803cd91390d7477e6286c12acc',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fipc_5fpre_5fsend_5fhook_14',['cy_svc_lp_ipc_pre_send_hook',['../group__group__svc__lp__functions.html#ga93c6e9d3aa2624c70c41c1b2232d37ab',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5flow_5fnoise_5fconfig_15',['cy_svc_lp_low_noise_config',['../group__group__svc__lp__functions.html#ga024e9824090e13fb703d5fb68bb28c96',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fset_5fhp_5fcore_5finfo_16',['cy_svc_lp_set_hp_core_info',['../group__group__svc__lp__functions.html#gafe61da85a68d438487e8b31ca8ff8730',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fset_5fstage_17',['cy_svc_lp_set_stage',['../group__group__svc__lp__functions.html#ga3d34f860e974aa8241174a25754a0aac',1,'cy_staged_voice_control_lp.h']]],
+  ['cy_5fsvc_5flp_5fthread_5fstart_5fhook_18',['cy_svc_lp_thread_start_hook',['../group__group__svc__lp__functions.html#gaf2bb44e46629dce38c4cd3b62f1886a1',1,'cy_staged_voice_control_lp.h']]]
 ];

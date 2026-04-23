@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -61,8 +61,8 @@ svc_lp_check_points svc_lp_check_point = {0};
 
 unsigned int svc_lp_stats_get_feed_counter(void)
 {
-	svc_lp_instance_t *lp_instance = svc_lp_get_instance();
-	return(lp_instance->stats.frame_counter_received_after_last_aad_dbg);
+    svc_lp_instance_t *lp_instance = svc_lp_get_instance();
+    return(lp_instance->stats.frame_counter_received_after_last_aad_dbg);
 }
 
 

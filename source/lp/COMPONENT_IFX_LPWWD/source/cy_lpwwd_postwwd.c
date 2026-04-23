@@ -57,6 +57,8 @@
 #include "cy_post_process.h"
 #include "cy_lpwwd_defines.h"
 #include "cy_lpwwd_debug_utils.h"
+#include "cy_svc_model.h"
+#include "staged_voice_control_lp_sod.h"
 
 /******************************************************
  *                      Typedefs
@@ -66,9 +68,9 @@
  *                      Macros
  ******************************************************/
 #if ENABLE_LPWWD_LOGS == 2
-#define cy_lpwwd_postwwd_log_info(format,...)  printf ("[postwwd] "format" \r\n",##__VA_ARGS__);
+#define cy_lpwwd_postwwd_log_info(format,...)  printf ("[postwwd] [%s:%d] "format" \r\n",__FUNCTION__,__LINE__,##__VA_ARGS__);
 #define cy_lpwwd_postwwd_log_err(ret_val,format,...)  printf ("[postwwd] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
-#define cy_lpwwd_postwwd_log_dbg(format,...)  printf ("[postwwd] "format" \r\n",##__VA_ARGS__);
+#define cy_lpwwd_postwwd_log_dbg(format,...)  printf ("[postwwd] [%s:%d] "format" \r\n",__FUNCTION__,__LINE__,##__VA_ARGS__);
 #elif ENABLE_LPWWD_LOGS
 #define cy_lpwwd_postwwd_log_info(format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[postwwd] "format" \r\n",##__VA_ARGS__);
 #define cy_lpwwd_postwwd_log_err(ret_val,format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[postwwd] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
@@ -78,6 +80,9 @@
 #define cy_lpwwd_postwwd_log_err(ret_val,format,...)
 #define cy_lpwwd_postwwd_log_dbg(format,...)
 #endif
+
+
+#define MAX_LPWWD_PP_CONFIG_PRMS 17
 
 /******************************************************
  *                      Variables
@@ -90,37 +95,43 @@ float naive_pp_thd = NAIVE_PP_THD;
 float wwd_trigger_threshold = 0.5f;
 static uint16_t infer_out_size = 4;
 
-int hmm_pp_detections;
-int hmm_pp_kwrejections;
-int hmm_pp_rejections;
-int hmm_pp_sptimeouts;
-int hmm_pp_ntimeouts;
-int hmm_pp_other_cases;
-int hmm_pp_no_decisions;
+int pp_detections;
+int pp_kwrejections;
+int pp_rejections;
+int pp_sptimeouts;
+int pp_ntimeouts;
+int pp_other_cases;
+int pp_no_decisions;
 
 /* Buffer for inference output ids */
 int* output_id_array = NULL;    /* This can be NULL for one keyword model by default. Used for multi-keywords models. */
 void *reduced_output_score = NULL;
 #define CLASS_ID_SINGLE_WWD "WWDtoken0, WWDtoken1, garbage, noise"
 
+static uint8_t ww_tokens = SVC_WW_TOKENS; /* Default is 2 */
+static uint8_t ww_series = SVC_WW_SERIES; /* Default is 1 WW */
+#ifdef ENABLE_IFX_LPWWD_HMMS
+static bool ww_series_first_part = true;
+#endif
 /******************************************************
  *                      Function Prototypes
  ******************************************************/
 void init_hmm_pp_stats()
 {
-    hmm_pp_detections = 0;
-    hmm_pp_kwrejections = 0;
-    hmm_pp_rejections = 0;
-    hmm_pp_sptimeouts = 0;
-    hmm_pp_ntimeouts = 0;
-    hmm_pp_other_cases = 0;
-    hmm_pp_no_decisions = 0;
+    pp_detections = 0;
+    pp_kwrejections = 0;
+    pp_rejections = 0;
+    pp_sptimeouts = 0;
+    pp_ntimeouts = 0;
+    pp_other_cases = 0;
+    pp_no_decisions = 0;
 }
 
 
-cy_rslt_t cy_lpwwd_postwwd_classid_init(char *class_id_buffer)
+cy_rslt_t cy_lpwwd_postwwd_classid_init(char *class_id_buffer, uint8_t ww_tokens)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
+    uint32_t class_num = ww_tokens + 2; /* keyword tokens + garbage + noise */
 
     if (class_id_buffer != NULL)
     {/* Prepare for combining output scores */
@@ -144,16 +155,16 @@ cy_rslt_t cy_lpwwd_postwwd_classid_init(char *class_id_buffer)
         if (svc_alloc_memory)
         {
             svc_alloc_memory(CY_SVC_MEM_ID_GENERIC_MEMORY,
-                    (uint32_t)(NUM_PP_CLASS * sizeof(float)),
+                    (uint32_t)(class_num * sizeof(float)),
                     (void**) &reduced_output_score);
             if (NULL != reduced_output_score)
             {
-                memset(reduced_output_score, 0, NUM_PP_CLASS * sizeof(float));
+                memset(reduced_output_score, 0, class_num * sizeof(float));
             }
         }
         else
         {
-            reduced_output_score = calloc(NUM_PP_CLASS, sizeof(float));
+            reduced_output_score = calloc(class_num, sizeof(float));
         }
         if (output_id_array == NULL || reduced_output_score == NULL)
         {
@@ -161,7 +172,7 @@ cy_rslt_t cy_lpwwd_postwwd_classid_init(char *class_id_buffer)
             return CY_RSLT_LPWWD_OUT_OF_MEMORY;
         }
 
-        status = ifx_class_convertion_init(class_id_buffer, output_id_array, infer_out_size);
+        status = ifx_class_convertion_init(class_id_buffer, output_id_array, infer_out_size, ww_tokens);
         if (status != CY_RSLT_SUCCESS) {
         	cy_lpwwd_postwwd_log_info("IFX Class Convertion init error status:, exit!");
             return status;
@@ -177,11 +188,12 @@ cy_rslt_t cy_lpwwd_postwwd_classid_init(char *class_id_buffer)
 }
 
 
-
 cy_rslt_t cy_lpwwd_postwwd_init(cy_lpwwd_postwwd_config_params_t *config_params)
 {
     cy_rslt_t status = CY_RSLT_SUCCESS;
-    cy_inference_post_process_config_params_t hmm_pp_config = { 0 };
+#ifdef ENABLE_IFX_LPWWD_HMMS
+    ifx_hmms_post_process_config_params_t hmm_pp_config = { 0 };
+#endif
 
     if(NULL != pp_handle)
     {
@@ -197,6 +209,7 @@ cy_rslt_t cy_lpwwd_postwwd_init(cy_lpwwd_postwwd_config_params_t *config_params)
         return status;
     }
 
+#ifdef ENABLE_IFX_LPWWD_HMMS
     hmm_pp_config.sampling_rate = config_params->sampling_rate;
     hmm_pp_config.number_of_classes = config_params->number_of_tokens;
     hmm_pp_config.frame_rate = config_params->frame_rate;
@@ -214,14 +227,62 @@ cy_rslt_t cy_lpwwd_postwwd_init(cy_lpwwd_postwwd_config_params_t *config_params)
             hmm_pp_config.stacked_frame_delay,
             hmm_pp_config.detection_threshold);
 
-    status = cy_inference_post_process_init(&hmm_pp_config, &pp_handle);
+    status = cy_inference_post_process_init(&hmm_pp_config, &pp_handle, IFX_POST_PROCESS_IP_COMPONENT_HMMS);
     if (status != CY_RSLT_SUCCESS)
     {
         cy_lpwwd_postwwd_log_err(status, "cy_inference_post_process_init fail");
         return status;
     }
+    //speech_utils_hmms_post_process_get_threshold(pp_handle->pp_handle, &hmm_pp_thd);
+    ww_series_first_part = true;
+#else
+        int32_t lpwwd_pp_config_prms[MAX_LPWWD_PP_CONFIG_PRMS + 5] = { 0 }; /* +5 is for audio config parameters, others are LPWWD specific */
 
-    //speech_utils_post_process_get_threshold(pp_handle->pp_handle, &hmm_pp_thd);
+        /* lpwwd PP parameter loading, i.e. overwrite default parameters */
+        lpwwd_pp_config_prms[0] = 0;
+        lpwwd_pp_config_prms[1] = config_params->sampling_rate; /* sampling rate */
+        lpwwd_pp_config_prms[2] = 160; /* input frame size */
+        lpwwd_pp_config_prms[3] = IFX_POST_PROCESS_IP_COMPONENT_LPWWD;
+        lpwwd_pp_config_prms[4] = MAX_LPWWD_PP_CONFIG_PRMS;     /* number of parameters */
+
+        lpwwd_pp_config_prms[5] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[0];//ww_series;
+        lpwwd_pp_config_prms[6] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[1];//ww_tokens;
+        lpwwd_pp_config_prms[7] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[2];//garbage_count_threshold;
+        lpwwd_pp_config_prms[8] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[3];//garbage_count_2nd_threshold;
+        lpwwd_pp_config_prms[9] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[4];//timeout_threshold;
+        lpwwd_pp_config_prms[10] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[5];//prob0_threshold;
+        lpwwd_pp_config_prms[11] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[6];//prob1_threshold;
+        lpwwd_pp_config_prms[12] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[7];//prob2_threshold;
+        lpwwd_pp_config_prms[13] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[8];//prob3_threshold;
+        lpwwd_pp_config_prms[14] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[9];//count0_threshold;
+        lpwwd_pp_config_prms[15] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[10];//count1_threshold;
+        lpwwd_pp_config_prms[16] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[11];//count2_threshold;
+        lpwwd_pp_config_prms[17] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[12];//count3_threshold;
+        lpwwd_pp_config_prms[18] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[13];//gap0_threshold;
+        lpwwd_pp_config_prms[19] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[14];//gap1_threshold;
+        lpwwd_pp_config_prms[20] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[15];//gap2_threshold;
+        lpwwd_pp_config_prms[21] = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[16];//gap3_threshold;
+
+        cy_lpwwd_postwwd_log_info(
+        "lpwwd_pp_config_prms[5-21]:WWSeries:%"PRId32",WWTokens:%"PRId32",GC1Th:%"PRId32",GC2Th:%"PRId32",TOTh:%"PRId32",P0Th:%"PRId32",P1Th:%"PRId32",P2Th:%"PRId32",P3Th:%"PRId32",C0Th:%"PRId32",C1Th:%"PRId32",C2Th:%"PRId32",C3Th:%"PRId32",G0Th:%"PRId32",G1Th:%"PRId32",G2Th:%"PRId32",G3Th:%"PRId32"",
+        lpwwd_pp_config_prms[5], lpwwd_pp_config_prms[6],
+        lpwwd_pp_config_prms[7], lpwwd_pp_config_prms[8], lpwwd_pp_config_prms[9],
+        lpwwd_pp_config_prms[10], lpwwd_pp_config_prms[11], lpwwd_pp_config_prms[12],
+        lpwwd_pp_config_prms[13], lpwwd_pp_config_prms[14], lpwwd_pp_config_prms[15],
+        lpwwd_pp_config_prms[16], lpwwd_pp_config_prms[17], lpwwd_pp_config_prms[18],
+        lpwwd_pp_config_prms[19], lpwwd_pp_config_prms[20], lpwwd_pp_config_prms[21]);
+
+
+        ww_series = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[0];
+        ww_tokens = SVC_MODEL_LPWWD_PP_CONFIG_PARAMS[1];
+
+        status = cy_inference_post_process_init(&lpwwd_pp_config_prms, &pp_handle, IFX_POST_PROCESS_IP_COMPONENT_LPWWD);
+        if (status != CY_RSLT_SUCCESS)
+        {
+            cy_lpwwd_postwwd_log_err(status, "cy_inference_post_process_init fail");
+            return status;
+        }
+#endif
 
     if (naive_pp_thd < 0)
     {
@@ -237,7 +298,7 @@ cy_rslt_t cy_lpwwd_postwwd_init(cy_lpwwd_postwwd_config_params_t *config_params)
 
     char *class_id_buffer = CLASS_ID_SINGLE_WWD;
 
-    status = cy_lpwwd_postwwd_classid_init(class_id_buffer);
+    status = cy_lpwwd_postwwd_classid_init(class_id_buffer, ww_tokens);
 
     return status;
 }
@@ -265,7 +326,7 @@ cy_rslt_t cy_lpwwd_postwwd_process(int16_t *output_score,
 
     if (output_id_array != NULL && reduced_output_score != NULL)
     { /* Combine negative output scores */
-        status = ifx_class_convertion_for_pp(output_score, IFX_ML_DATA_INT16, reduced_output_score, output_id_array, infer_out_size);
+        status = ifx_class_convertion_for_pp(output_score, IFX_ML_DATA_INT16, reduced_output_score, output_id_array, infer_out_size, ww_tokens);
         if (status != IFX_SP_ENH_SUCCESS)
         {
         	status = CY_RSLT_LPWWD_ERROR_POST_PROCESS;
@@ -314,42 +375,91 @@ cy_rslt_t cy_lpwwd_postwwd_process(int16_t *output_score,
                 &decision);
     }
 
-    if (decision == 1)
+#ifdef ENABLE_IFX_LPWWD_HMMS
+    cy_lpwwd_postwwd_log_dbg("HMM PP decision: %d", decision);
+    if (decision == 1 && ww_series == 1)
     {
-        hmm_pp_detections++;
+        pp_detections++;
         *wwd_status = CY_LPWWD_WAKE_WORD_DETECTED;
+    }
+    else if (decision == 1 && ww_series == 2)
+    {
+        if (ww_series_first_part) { /* 1st part detected will start second part detection so do not reset detection */
+            ww_series_first_part = false;
+        }
+        else {
+            *wwd_status = CY_LPWWD_WAKE_WORD_DETECTED;
+            pp_no_decisions++;
+        }
     }
     else if (decision == 0)
     {
-        hmm_pp_no_decisions++;
+        pp_no_decisions++;
         *wwd_status = CY_LPWWD_WAKE_WORD_DETECTION_IN_PROGRESS;
     }
     else if (decision == -1)
     {
-        hmm_pp_kwrejections++;
+        pp_kwrejections++;
         *wwd_status = CY_LPWWD_WAKE_WORD_NOT_DETECTED;
     }
     else if (decision == -2)
     {
-        hmm_pp_rejections++;
+        pp_rejections++;
         *wwd_status = CY_LPWWD_WAKE_WORD_REJECTED;
     }
     else if (decision == -3)
     {
-        hmm_pp_sptimeouts++;
+        pp_sptimeouts++;
         *wwd_status = CY_LPWWD_TIMEOUT;
     }
     else if (decision == -4)
     {
-        hmm_pp_ntimeouts++;
+        pp_ntimeouts++;
         *wwd_status = CY_LPWWD_TIMEOUT;
     }
     else if (decision < 0)
     {
-        hmm_pp_other_cases++;
+        pp_other_cases++;
         *wwd_status = CY_LPWWD_FAIL_REASON_NOT_KNOWN;
     }
+#else
+    cy_lpwwd_postwwd_log_dbg("LPWWD PP decision: %d", decision);
+    if (decision > 0)
+    {
+        pp_detections++;
+        *wwd_status = CY_LPWWD_WAKE_WORD_DETECTED;
+    }
+    else if (decision == 0)
+    {
+        pp_no_decisions++;
+        *wwd_status = CY_LPWWD_WAKE_WORD_DETECTION_IN_PROGRESS;
+    }
+    else
+    {
+        cy_lpwwd_postwwd_log_dbg("LPWWD Rejected decision: %d", decision);
+        /*  (-1) // rejected WW
+            (-2) // rejected garbage WW
+            (-3) // rejected WW due to gap too large
+            (-4) // rejected WW due to gap too large
+            (-5) // rejected WW due to not reaching last state
+        */
+        if(svc_lp_get_sod_redetection_count() > 0)
+        {
+            /* Continue LPWWD detection, since there more SOD detected in buffer during the LPWWD  */
+            *wwd_status = CY_LPWWD_WAKE_WORD_DETECTION_IN_PROGRESS;
 
+            svc_lp_decrement_sod_redetection_count();
+
+            /* Reset PP since decision without resetting the counters, since a decision is made and we want to continue detection */
+            cy_lpwwd_postwwd_reset();
+        }
+        else
+        {
+            pp_rejections++;
+            *wwd_status = CY_LPWWD_WAKE_WORD_NOT_DETECTED;
+        }
+    }
+#endif
     return status;
 }
 
@@ -369,6 +479,9 @@ cy_rslt_t cy_lpwwd_postwwd_reset()
     {
         cy_lpwwd_postwwd_log_err(status, "PostWWD reset fail");
     }
+#ifdef ENABLE_IFX_LPWWD_HMMS
+    ww_series_first_part = true;
+#endif
     return status;
 }
 

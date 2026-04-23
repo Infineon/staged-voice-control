@@ -23,5 +23,9 @@ var group__group__svc__lp__structures =
       [ "timeout_ms", "structcy__svc__lp__low__noise__config__t.html#ae780f948634b511e7bae5cbba9c2a841", null ],
       [ "low_noise_threshold", "structcy__svc__lp__low__noise__config__t.html#a34ebc705611d29de5130d8c786787911", null ],
       [ "enable_feature", "structcy__svc__lp__low__noise__config__t.html#ac51104e034d418370900aeb48d9dc94f", null ]
+    ] ],
+    [ "cy_svc_lp_gain_config_t", "structcy__svc__lp__gain__config__t.html", [
+      [ "post_hpf_gain", "structcy__svc__lp__gain__config__t.html#ac7771407fa8fc10c6157ce9043904a86", null ],
+      [ "sod_processing_gain", "structcy__svc__lp__gain__config__t.html#abea90fa230b31c584fdec5ddeb8635c1", null ]
     ] ]
 ];

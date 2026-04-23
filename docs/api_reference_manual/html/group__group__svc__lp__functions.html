@@ -119,9 +119,15 @@ Functions</h2></td></tr>
 <tr class="memitem:ga8a769fdf715aecbbdf143af0a9773de4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__svc__lp__functions.html#ga8a769fdf715aecbbdf143af0a9773de4">cy_svc_lp_ipc_post_recv_hook</a> (void)</td></tr>
 <tr class="memdesc:ga8a769fdf715aecbbdf143af0a9773de4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Post-receive hook for IPC communication in low power mode.  <a href="group__group__svc__lp__functions.html#ga8a769fdf715aecbbdf143af0a9773de4">More...</a><br /></td></tr>
 <tr class="separator:ga8a769fdf715aecbbdf143af0a9773de4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf2bb44e46629dce38c4cd3b62f1886a1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__svc__lp__functions.html#gaf2bb44e46629dce38c4cd3b62f1886a1">cy_svc_lp_thread_start_hook</a> (void)</td></tr>
+<tr class="memdesc:gaf2bb44e46629dce38c4cd3b62f1886a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Thread start hook for staged voice control in low power mode.  <a href="group__group__svc__lp__functions.html#gaf2bb44e46629dce38c4cd3b62f1886a1">More...</a><br /></td></tr>
+<tr class="separator:gaf2bb44e46629dce38c4cd3b62f1886a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga024e9824090e13fb703d5fb68bb28c96"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__svc__lp__functions.html#ga024e9824090e13fb703d5fb68bb28c96">cy_svc_lp_low_noise_config</a> (<a class="el" href="structcy__svc__lp__low__noise__config__t.html">cy_svc_lp_low_noise_config_t</a> *low_noise_config)</td></tr>
 <tr class="memdesc:ga024e9824090e13fb703d5fb68bb28c96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure low noise settings for the staged voice control low power module.  <a href="group__group__svc__lp__functions.html#ga024e9824090e13fb703d5fb68bb28c96">More...</a><br /></td></tr>
 <tr class="separator:ga024e9824090e13fb703d5fb68bb28c96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga10524a88d8b2f99b99f9087855419e1b"><td class="memItemLeft" align="right" valign="top">cy_rslt_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__group__svc__lp__functions.html#ga10524a88d8b2f99b99f9087855419e1b">cy_svc_lp_gain_config</a> (<a class="el" href="structcy__svc__lp__gain__config__t.html">cy_svc_lp_gain_config_t</a> *gain_config)</td></tr>
+<tr class="memdesc:ga10524a88d8b2f99b99f9087855419e1b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configure gain settings for the staged voice control low power module.  <a href="group__group__svc__lp__functions.html#ga10524a88d8b2f99b99f9087855419e1b">More...</a><br /></td></tr>
+<tr class="separator:ga10524a88d8b2f99b99f9087855419e1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="gacc5a7dcd822f5f8f561ac98f3880f155" name="gacc5a7dcd822f5f8f561ac98f3880f155"></a>
@@ -353,6 +359,27 @@ Application should take care of not calling any of SVC MW LP APIs (cy_svc_lp_fee
 
 </div>
 </div>
+<a id="gaf2bb44e46629dce38c4cd3b62f1886a1" name="gaf2bb44e46629dce38c4cd3b62f1886a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf2bb44e46629dce38c4cd3b62f1886a1">&#9670;&nbsp;</a></span>cy_svc_lp_thread_start_hook()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void cy_svc_lp_thread_start_hook </td>
+          <td>(</td>
+          <td class="paramtype">void&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Thread start hook for staged voice control in low power mode. </p>
+<p >This weak function can be overridden by the user to perform actions when the staged voice control thread starts in low power mode. </p>
+
+</div>
+</div>
 <a id="ga024e9824090e13fb703d5fb68bb28c96" name="ga024e9824090e13fb703d5fb68bb28c96"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga024e9824090e13fb703d5fb68bb28c96">&#9670;&nbsp;</a></span>cy_svc_lp_low_noise_config()</h2>
 
@@ -374,6 +401,34 @@ Application should take care of not calling any of SVC MW LP APIs (cy_svc_lp_fee
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">low_noise_config</td><td>Pointer to the low noise configuration structure containing the desired noise reduction parameters. Must not be NULL.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>cy_rslt_t Result code indicating the success or failure of the operation. </dd></dl>
+
+</div>
+</div>
+<a id="ga10524a88d8b2f99b99f9087855419e1b" name="ga10524a88d8b2f99b99f9087855419e1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga10524a88d8b2f99b99f9087855419e1b">&#9670;&nbsp;</a></span>cy_svc_lp_gain_config()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">cy_rslt_t cy_svc_lp_gain_config </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structcy__svc__lp__gain__config__t.html">cy_svc_lp_gain_config_t</a> *&#160;</td>
+          <td class="paramname"><em>gain_config</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Configure gain settings for the staged voice control low power module. </p>
+<p >This function applies the specified gain configuration parameters to adjust the audio signal levels within the voice control system. The configuration affects the amplification applied at various stages of audio processing.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">gain_config</td><td>Pointer to the gain configuration structure containing the desired gain parameters. Must not be NULL.</td></tr>
   </table>
   </dd>
 </dl>

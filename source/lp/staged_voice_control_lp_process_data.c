@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -97,50 +97,33 @@ cy_rslt_t svc_lp_feed_data_to_cbuf_and_notify_task(svc_lp_instance_t *lp_instanc
             return ret_val;
         }
 #endif
+        memcpy(circular_buffer_wr_pointer, input_data,
+                lp_instance->circular_shared_buffer->frame_size_in_bytes);
 
-#ifdef COMPONENT_PROFILER
-        cy_svc_profile(SVC_HPF_PROFILE_CMD_START,NULL);
-#endif /* COMPONENT_PROFILER */
+        q_msg.cmd = SVC_LP_CMD_ID_DATA_RECEIVED;
+        q_msg.data_crc_check = svc_lp_create_crc_for_buffer(lp_instance,
+                (char*) circular_buffer_wr_pointer);
+        q_msg.cbuf_pointer = (char *)circular_buffer_wr_pointer;
 
-        ret_val = svc_lp_hpf_process(lp_instance, (uint8_t*) input_data,
-                circular_buffer_wr_pointer);
-
-#ifdef COMPONENT_PROFILER
-        cy_svc_profile(SVC_HPF_PROFILE_CMD_STOP,NULL);
-#endif /* COMPONENT_PROFILER */
-
+        /**
+         * Timeout is 0, fail in the put Q gives clue on data
+         * Q size of some processing power in some thread is problem.
+         * or some thread is not releasing the CPU
+         */
+        ret_val = cy_rtos_put_queue(&lp_instance->data_queue, &q_msg, 0,
+                is_in_isr());
         if (CY_RSLT_SUCCESS != ret_val)
         {
-            cy_svc_log_err_on_no_isr(ret_val, "HPF process fail");
+            size_t num_waiting = 0;
+            cy_rtos_count_queue(&lp_instance->data_queue, &num_waiting);
+
+//                cy_svc_log_err_on_no_isr(ret_val, "data input Q put fail, size:%d",
+//                        num_waiting);
             goto CLEAN_RETURN;
         }
         else
         {
-            q_msg.cmd = SVC_LP_CMD_ID_DATA_RECEIVED;
-            q_msg.data_crc_check = svc_lp_create_crc_for_buffer(lp_instance,
-                    (char*) circular_buffer_wr_pointer);
-            q_msg.cbuf_pointer = (char *)circular_buffer_wr_pointer;
-
-            /**
-             * Timeout is 0, fail in the put Q gives clue on data
-             * Q size of some processing power in some thread is problem.
-             * or some thread is not releasing the CPU
-             */
-            ret_val = cy_rtos_put_queue(&lp_instance->data_queue, &q_msg, 0,
-                    is_in_isr());
-            if (CY_RSLT_SUCCESS != ret_val)
-            {
-                size_t num_waiting = 0;
-                cy_rtos_count_queue(&lp_instance->data_queue, &num_waiting);
-
-//                cy_svc_log_err_on_no_isr(ret_val, "data input Q put fail, size:%d",
-//                        num_waiting);
-                goto CLEAN_RETURN;
-            }
-            else
-            {
-                b_successfully_posted = true;
-            }
+            b_successfully_posted = true;
         }
     }
 
@@ -182,6 +165,26 @@ cy_rslt_t svc_lp_process_data(svc_lp_instance_t *lp_instance, uint8_t *data)
         if (CY_RSLT_SUCCESS != ret_val)
         {
             cy_svc_log_err(ret_val, "Process SOD fail");
+            goto CLEAN_RETURN;
+        }
+    }
+
+    if( (lp_instance->init_params.stage_config_list & CY_SVC_ENABLE_HPF) &&\
+        (lp_instance->sod_detected == true) )
+    {
+#ifdef COMPONENT_PROFILER
+        cy_svc_profile(SVC_HPF_PROFILE_CMD_START,NULL);
+#endif /* COMPONENT_PROFILER */
+
+        ret_val = svc_lp_hpf_process(lp_instance, (uint8_t*) data, data);
+
+#ifdef COMPONENT_PROFILER
+        cy_svc_profile(SVC_HPF_PROFILE_CMD_STOP,NULL);
+#endif /* COMPONENT_PROFILER */
+
+        if (CY_RSLT_SUCCESS != ret_val)
+        {
+            cy_svc_log_err_on_no_isr(ret_val, "HPF process fail");
             goto CLEAN_RETURN;
         }
     }

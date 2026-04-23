@@ -1,6 +1,6 @@
 // This file is generated. Do not edit.
-// Generated on: 10.12.2024 14:53:10
-// Build version: 3.0.0.13974
+// Generated on: 30.03.2026 12:48:03
+// Build version: 3.2.0.16398
 
 #ifndef OK_INFINEON_INT8_GEN_H
 #define OK_INFINEON_INT8_GEN_H
@@ -11,8 +11,8 @@
 extern "C" {
 #endif  // __cplusplus
 
-#define OK_INFINEON_INT8_MODEL_CONST_DATA_SIZE 131426
-#define OK_INFINEON_INT8_MODEL_INIT_DATA_SIZE 576
+#define OK_INFINEON_INT8_MODEL_CONST_DATA_SIZE 131442
+#define OK_INFINEON_INT8_MODEL_INIT_DATA_SIZE 4708
 #define OK_INFINEON_INT8_MODEL_UNINIT_DATA_SIZE 1396
 
 

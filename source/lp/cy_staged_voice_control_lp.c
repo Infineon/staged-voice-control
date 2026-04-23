@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -44,6 +44,7 @@
 #include "staged_voice_control_lp_resource.h"
 #include "staged_voice_control_lp_process_data.h"
 #include "staged_voice_control_lp_resource.h"
+#include "staged_voice_control_lp_gain.h"
 #ifndef ENABLE_MIC_INPUT_FEED
 #ifdef ENABLE_USB_DBG_OUTPUT
 #include "audio_usb_send_utils.h"
@@ -524,6 +525,57 @@ cy_rslt_t cy_svc_lp_set_hp_core_info(cy_svc_lp_set_hp_core_info_t core_info)
         }
     }
     CLEAN_RETURN:
+    return ret_val;
+}
+
+/**
+ * @brief Configure gain settings for the staged voice control low power module.
+ *
+ * This function applies the specified gain configuration parameters to adjust
+ * the audio signal levels within the voice control system. The configuration
+ * affects the amplification applied at various stages of audio processing.
+ *
+ * @param[in] gain_config Pointer to the gain configuration structure
+ *                        containing the desired gain parameters.
+ *                        Must not be NULL.
+ *
+ * @return cy_rslt_t Result code indicating the success or failure of the operation.
+ *
+ */
+cy_rslt_t cy_svc_lp_gain_config(cy_svc_lp_gain_config_t *gain_config)
+{
+    cy_rslt_t ret_val = CY_RSLT_SVC_GENERIC_ERROR;
+    svc_lp_instance_t *lp_instance = NULL;
+
+    if (NULL == gain_config)
+    {
+        ret_val = CY_RSLT_SVC_BAD_ARG;
+        cy_svc_log_err(ret_val, "NULL params %p", gain_config);
+        return ret_val;
+    }
+
+    lp_instance = svc_lp_get_instance();
+
+    if (false == lp_instance->init_done)
+    {
+        ret_val = CY_RSLT_SVC_NOT_INITIALIZED;
+        cy_svc_log_err(ret_val, "cy_svc_lp_init is not initialized");
+        return ret_val;
+    }
+
+    if( (gain_config->post_hpf_gain > SVC_LP_MAX_GAIN_VALUE) ||
+        (gain_config->sod_processing_gain > SVC_LP_MAX_GAIN_VALUE) )
+    {
+        ret_val = CY_RSLT_SVC_BAD_ARG;
+        cy_svc_log_err(ret_val, "Invalid gain config params");
+        return ret_val;
+    }
+
+    lp_instance->gain_config = *gain_config;
+    cy_svc_log_info("Gain config updated: post_hpf_gain=%d, sod_processing_gain=%d",
+        gain_config->post_hpf_gain, gain_config->sod_processing_gain);
+
+    ret_val = CY_RSLT_SUCCESS;
     return ret_val;
 }
 

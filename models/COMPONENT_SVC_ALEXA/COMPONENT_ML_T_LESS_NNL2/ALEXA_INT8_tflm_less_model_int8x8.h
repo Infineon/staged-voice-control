@@ -1,6 +1,6 @@
 // This file is generated. Do not edit.
-// Generated on: 10.01.2025 08:45:04
-// Build version: 3.0.0.13974
+// Generated on: 31.03.2026 09:27:20
+// Build version: 3.2.0.16398
 
 #ifndef ALEXA_INT8_GEN_H
 #define ALEXA_INT8_GEN_H
@@ -11,8 +11,8 @@
 extern "C" {
 #endif  // __cplusplus
 
-#define ALEXA_INT8_MODEL_CONST_DATA_SIZE 131426
-#define ALEXA_INT8_MODEL_INIT_DATA_SIZE 576
+#define ALEXA_INT8_MODEL_CONST_DATA_SIZE 131442
+#define ALEXA_INT8_MODEL_INIT_DATA_SIZE 4708
 #define ALEXA_INT8_MODEL_UNINIT_DATA_SIZE 1396
 
 

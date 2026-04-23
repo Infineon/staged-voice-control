@@ -78,6 +78,23 @@ typedef void* cy_lpwwd_handle_t;
  */
 #define MAX_LPWWD_FEED_FRAMES_COUNT_FOR_WW_DETECT_TIMEOUT (4 * 100)    //4 second
 
+/**
+ * HMM post processing max WW series. These values are only relevant
+ * if HMM based post processing is enabled.
+ */
+#ifndef SVC_WW_SERIES
+#define SVC_WW_SERIES (1)
+#endif
+
+/**
+ * HMM post processing max WW tokens. These values are only relevant
+ * if HMM based post processing is enabled.
+ */
+#ifndef SVC_WW_TOKENS
+#define SVC_WW_TOKENS (2)
+#endif
+
+
 /** \} group_lpwwd_macros */
 
 /*******************************************************************************

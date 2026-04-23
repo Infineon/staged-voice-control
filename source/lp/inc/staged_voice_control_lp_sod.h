@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -86,6 +86,20 @@ cy_rslt_t svc_lp_sod_process(svc_lp_instance_t *lp_instance, uint8_t *data);
 cy_rslt_t svc_lp_sod_reset (svc_lp_instance_t *lp_instance);
 
 cy_rslt_t svc_lp_sod_reset_and_high_components(svc_lp_instance_t *lp_instance);
+
+/**
+ * @brief Get the count of SOD (Speech Onset Detection) re-detections.
+ *
+ * @return uint32_t The number of times SOD has been re-detected.
+ */
+uint32_t svc_lp_get_sod_redetection_count(void);
+
+/**
+ * @brief Decrement the count of SOD (Speech Onset Detection) re-detections.
+ *
+ * This function decrements the SOD re-detection count if it is greater than zero.
+ */
+void svc_lp_decrement_sod_redetection_count(void);
 
 #endif
 

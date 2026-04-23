@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -398,6 +398,33 @@ typedef struct
 
 } cy_svc_lp_low_noise_config_t;
 
+/**
+ * Gain configuration structure for low power domain.
+ */
+typedef struct
+{
+    /**
+     * Gain value to be applied post High Pass Filter (HPF) processing.
+     * Typically represented as a linear gain factor.
+     * A value of '1' or '0' means unity gain (no change).
+     * A value of '3' amplifies the signal by 10db
+     */
+    uint8_t post_hpf_gain;
+
+    /**
+     * Gain value to be applied before SOD (Speech On Detection) processing.
+     * Typically represented as a linear gain factor. This is applied to
+     * ensure the SOD works optimally at various input signal levels.
+     * A value of '1' or '0' means unity gain (no change).
+     * A value of '3' amplifies the signal by
+     *
+     * This gain is only for SOD processing and does not affect the output audio
+     * sent to the high performance core.
+     */
+    uint8_t sod_processing_gain;
+
+} cy_svc_lp_gain_config_t;
+
 /** \} group_svc_lp_structures */
 
 /*******************************************************************************
@@ -541,6 +568,15 @@ void cy_svc_lp_ipc_post_recv_hook(void);
 
 
 /**
+ * @brief Thread start hook for staged voice control in low power mode.
+ *
+ * This weak function can be overridden by the user to perform actions
+ * when the staged voice control thread starts in low power mode.
+ */
+void cy_svc_lp_thread_start_hook(void);
+
+
+/**
  * @brief Configure low noise settings for the staged voice control low power module.
  *
  * This function applies the specified low noise configuration parameters to optimize
@@ -555,6 +591,22 @@ void cy_svc_lp_ipc_post_recv_hook(void);
  *
  */
 cy_rslt_t cy_svc_lp_low_noise_config(cy_svc_lp_low_noise_config_t *low_noise_config);
+
+/**
+ * @brief Configure gain settings for the staged voice control low power module.
+ *
+ * This function applies the specified gain configuration parameters to adjust
+ * the audio signal levels within the voice control system. The configuration
+ * affects the amplification applied at various stages of audio processing.
+ *
+ * @param[in] gain_config Pointer to the gain configuration structure
+ *                        containing the desired gain parameters.
+ *                        Must not be NULL.
+ *
+ * @return cy_rslt_t Result code indicating the success or failure of the operation.
+ *
+ */
+cy_rslt_t cy_svc_lp_gain_config(cy_svc_lp_gain_config_t *gain_config);
 
 /** \} group_svc_lp_functions */
 

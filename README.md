@@ -16,6 +16,8 @@ The block diagram depicts the audio pipeline for the always-on devices in which 
    `HPWWD` | HPWWD stands for high performance wake word detection. HPWWD component is used to detect configured wake word on high performance core (core2)
    `ASR` | ASR stands for automatic speech recognition. ASR component is used to identify and process the words
    `IPC` | IPC stands for inter-process communication. IPC component provides physical link between core1 & core2 to transfer the data between cores
+   `AMIC` | AMIC stands for analog microphone audio processing parameters. AMIC configuration is used for processing audio from analog microphone sources
+   `DMIC` | DMIC stands for digital microphone audio processing parameters. DMIC configuration is used for processing audio from digital microphone sources
 
 ## Staged voice control middleware
 As shown in the block diagram, highlighted blocks on core1 & core2 represents SVC middleware implementation. When the audio data passes through various stages of the pipeline, there is a need to maintain these stages in the system. SVC middleware running on core1 comprises of the SOD and LPWWD components internally. Staged voice control (SVC) middleware on core1 is responsible for maintaining the stages, feeding data to audio components based on the current stage, and sending data to core2 over the IPC channel, whereas the SVC middleware on core2 is responsible for receiving data over the IPC channel from core1, and providing it to the application for further processing.
@@ -35,7 +37,7 @@ Following are the various SVC stages and their transition.
 ![Audio State machine](./docs/api_reference_manual/html/svc_state_machine.jpg)
 
 ## Features supported
-* Staged voice control middleware has in-built support for the wake word models (Ok Infineon, Hey Google, Alexa). User can choose one of the wake word model.
+* Staged voice control middleware has in-built support for the wake word models (Ok Infineon, Hey Google, Alexa, Xiaodu Xiaodu). User can choose one of the wake word model.
 * Staged voice control middleware provides configuration of sample rate, audio input type (stereo/mono), and circular buffer size etc.
 * Staged voice control middleware provides configuration to enable components in the audio pipeline based on the use case (e.g., it allows to enable SOD, LPWWD, HPWWD, ASR component in the system).
 * Staged voice control middleware supports callback registration for the application to get through various stages when the audio data is being processed (such as speech detected, wake word detected etc.).
@@ -75,6 +77,17 @@ COMPONENTS+=ML_TFLM_LESS
 COMPONENTS+=ML_TFLM
 ```
 
+**Microphone parameter configuration (AMIC or DMIC):**
+```makefile
+# Select one of the microphone parameter sets for audio processing
+# These define specific audio processing parameters tuned for each microphone type
+COMPONENTS+=AMIC    # Analog Microphone audio processing parameters
+# or
+COMPONENTS+=DMIC    # Digital Microphone audio processing parameters
+# Note: Each wake word model includes optimized AMIC and DMIC parameter sets.
+# Only one of the above COMPONENTS should be enabled at a time.
+```
+
 **Additional Makefile configuration for model selection and inference engine:**
 ```makefile
 
@@ -86,6 +99,8 @@ COMPONENTS+=ML_TFLM
   COMPONENTS+=SVC_ALEXA
   # Select for ok Hey Google
   COMPONENTS+=SVC_HEY_GOOGLE
+  # Select for Xiaodu Xiaodu
+  COMPONENTS+=SVC_XIAODU_XIAODU
 # Note:- Only one of the above COMPONENTS should be enabled at a time to select the desired wake word model.
 
 # NN model name
@@ -97,6 +112,9 @@ ifeq ($(filter SVC_ALEXA,$(COMPONENTS)),SVC_ALEXA)
 endif
 ifeq ($(filter SVC_HEY_GOOGLE,$(COMPONENTS)),SVC_HEY_GOOGLE)
     NN_MODEL_NAME=HEY_GOOGLE_INT8
+endif
+ifeq ($(filter SVC_XIAODU_XIAODU,$(COMPONENTS)),SVC_XIAODU_XIAODU)
+    NN_MODEL_NAME=XIAODU_XIAODU_INT8
 endif
 
 # Configure inference engine and additional options
@@ -115,6 +133,17 @@ NN_TYPE=int8x8
 DEFINES+=MODEL_NAME=$(NN_MODEL_NAME)
 ```
 *This logic ensures the correct model and inference engine are selected based on the enabled components.*
+
+**Complete example Makefile configuration:**
+```makefile
+# Example: Ok Infineon model with digital microphone (DMIC)
+COMPONENTS+=SVC_OK_INFINEON DMIC ML_INT8x8 NNLITE2 ML_TFLM_LESS
+DEFINES+=ENABLE_SVC_LP_MW ENABLE_SVC_ML_MW_SUPPORT EMBEDDED_DEV ENABLE_IFX_LPWWD ENABLE_IFX_SOD TF_LITE_STATIC_MEMORY
+
+# Example: Alexa model with analog microphone (AMIC)
+# COMPONENTS+=SVC_ALEXA AMIC ML_INT8x8 NNLITE2 ML_TFLM
+# DEFINES+=ENABLE_SVC_LP_MW ENABLE_SVC_ML_MW_SUPPORT EMBEDDED_DEV ENABLE_IFX_LPWWD ENABLE_IFX_SOD TF_LITE_STATIC_MEMORY
+```
 
 **Enable debug log messages (Optional):**
 ```makefile

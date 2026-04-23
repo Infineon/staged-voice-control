@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -35,6 +35,8 @@
 #ifdef ENABLE_SVC_LP_MW
 
 #include "staged_voice_control_lp_hpf.h"
+#include "staged_voice_control_lp_gain.h"
+
 #ifndef ENABLE_HPF_STUB
 #include "ifx_sp_utils.h"
 #include "ifx_pre_post_process.h"
@@ -59,6 +61,7 @@ static int32_t pre_proc_hpf_config_prms[] = {
 /*******************************************************************************
  *                              Macros
  ******************************************************************************/
+#define MONO_FRAME_SAMPLE_SIZE             (160)
 
 /*******************************************************************************
  *                              Constants
@@ -352,6 +355,26 @@ cy_rslt_t svc_lp_hpf_process(
                                 IFX_SP_ENH_ERR_CODE(ErrIdx), IFX_SP_ENH_ERR_COMPONENT_INDEX(ErrIdx), IFX_SP_ENH_ERR_LINE_NUMBER(ErrIdx));
                 goto CLEAN_RETURN;
             }
+
+            if(lp_instance->gain_config.post_hpf_gain > 1)
+            {
+                /* Apply post HPF gain with clipping */
+                ret_val = svc_lp_apply_gain_with_clip(lp_instance->gain_config.post_hpf_gain,
+                    hpf_ouput1, hpf_ouput1, MONO_FRAME_SAMPLE_SIZE);
+                if(ret_val != CY_RSLT_SUCCESS)
+                {
+                    cy_svc_log_err(ret_val,"Post HPF gain application failed");
+                    goto CLEAN_RETURN;
+                }
+
+                ret_val = svc_lp_apply_gain_with_clip(lp_instance->gain_config.post_hpf_gain,
+                    hpf_ouput2, hpf_ouput2, MONO_FRAME_SAMPLE_SIZE);
+                if(ret_val != CY_RSLT_SUCCESS)
+                {
+                    cy_svc_log_err(ret_val,"Post HPF gain application failed");
+                    goto CLEAN_RETURN;
+                }
+            }
 #ifndef DISABLE_TEMP_HPF_COPY
             memcpy(output, hpf_ouput1, lp_instance->circular_shared_buffer->frame_size_in_bytes);
 #endif
@@ -359,9 +382,32 @@ cy_rslt_t svc_lp_hpf_process(
         else
 #endif
         {
-            memcpy(output, input, size_to_process);
-            memcpy(output + size_to_process, input + size_to_process,
-                    size_to_process);
+            if(lp_instance->gain_config.post_hpf_gain > 1)
+            {
+                /* Apply post HPF gain with clipping for bot the channels*/
+                ret_val = svc_lp_apply_gain_with_clip(lp_instance->gain_config.post_hpf_gain,
+                    (int16_t*)input, (int16_t*)output, MONO_FRAME_SAMPLE_SIZE);
+                if(ret_val != CY_RSLT_SUCCESS)
+                {
+                    cy_svc_log_err(ret_val,"Post HPF gain application failed");
+                    goto CLEAN_RETURN;
+                }
+
+                ret_val = svc_lp_apply_gain_with_clip(lp_instance->gain_config.post_hpf_gain,
+                        (int16_t*)(input + size_to_process), (int16_t*)(output + size_to_process), MONO_FRAME_SAMPLE_SIZE);
+                if(ret_val != CY_RSLT_SUCCESS)
+                {
+                    cy_svc_log_err(ret_val,"Post HPF gain application failed");
+                    goto CLEAN_RETURN;
+                }
+            }
+            else
+            {
+                memcpy(output, input, size_to_process);
+                memcpy(output + size_to_process, input + size_to_process,
+                        size_to_process);
+            }
+
         }
     }
     else
@@ -395,6 +441,18 @@ cy_rslt_t svc_lp_hpf_process(
                                 IFX_SP_ENH_ERR_CODE(ErrIdx), IFX_SP_ENH_ERR_COMPONENT_INDEX(ErrIdx), IFX_SP_ENH_ERR_LINE_NUMBER(ErrIdx));
                 goto CLEAN_RETURN;
             }
+
+            if(lp_instance->gain_config.post_hpf_gain > 1)
+            {
+                /* Apply post HPF gain with clipping */
+                ret_val = svc_lp_apply_gain_with_clip(lp_instance->gain_config.post_hpf_gain, hpf_ouput1, hpf_ouput1, MONO_FRAME_SAMPLE_SIZE);
+                if(ret_val != CY_RSLT_SUCCESS)
+                {
+                    cy_svc_log_err(ret_val,"Post HPF gain application failed");
+                    goto CLEAN_RETURN;
+                }
+            }
+
 #ifdef COMPONENT_HEX_DUMP
 //			cy_hex_dump(HEX_DUMP_ID_3 ,output, size_to_process);
 #endif
@@ -405,7 +463,21 @@ cy_rslt_t svc_lp_hpf_process(
             /**
              *  Perform simulated (memcopy) operation for HPF
              */
-            memcpy(output, input, size_to_process);
+            if(lp_instance->gain_config.post_hpf_gain > 1)
+            {
+                /* Apply post HPF gain with clipping */
+                ret_val = svc_lp_apply_gain_with_clip(lp_instance->gain_config.post_hpf_gain,
+                    (int16_t*)input, (int16_t*)output, MONO_FRAME_SAMPLE_SIZE);
+                if(ret_val != CY_RSLT_SUCCESS)
+                {
+                    cy_svc_log_err(ret_val,"Post HPF gain application failed");
+                    goto CLEAN_RETURN;
+                }
+            }
+            else
+            {
+                memcpy(output, input, size_to_process);
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -124,20 +124,27 @@ extern svc_lp_check_points svc_lp_check_point;
 
 
 #if ENABLE_SVC_LP_LOGS == 2
-#define cy_svc_log_info(format,...)  printf ("[SLP] "format" \r\n",##__VA_ARGS__);
-#define cy_svc_log_err(ret_val,format,...)  printf ("[SLP] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
-#define cy_svc_log_err_on_no_isr(ret_val,format,...)  if(false == is_in_isr()) printf ("[SLP] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
-#define cy_svc_log_dbg(format,...)  printf ("[SLP] "format" \r\n",##__VA_ARGS__);
+    #define cy_svc_log_info(format,...)  printf ("[SLP] "format" \r\n",##__VA_ARGS__);
+    #define cy_svc_log_err(ret_val,format,...)  printf ("[SLP] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
+    #define cy_svc_log_err_on_no_isr(ret_val,format,...)  if(false == is_in_isr()) printf ("[SLP] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
+    #ifdef ENABLE_SVC_LP_DBG_LOGS
+        #define cy_svc_log_dbg(format,...)  printf ("[SLP] "format" \r\n",##__VA_ARGS__);
+    #endif
 #elif ENABLE_SVC_LP_LOGS
-#define cy_svc_log_info(format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[SLP] "format" \r\n",##__VA_ARGS__);
-#define cy_svc_log_err(ret_val,format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[SLP] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
-#define cy_svc_log_err_on_no_isr(ret_val,format,...)  if(false == is_in_isr()) cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[SLP] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(unsigned int)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
-#define cy_svc_log_dbg(format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[SLP] "format" \r\n",##__VA_ARGS__);
+    #define cy_svc_log_info(format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[SLP] "format" \r\n",##__VA_ARGS__);
+    #define cy_svc_log_err(ret_val,format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[SLP] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(uint32_t)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
+    #define cy_svc_log_err_on_no_isr(ret_val,format,...)  if(false == is_in_isr()) cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[SLP] [Err:0x%"PRIx32", %s:%d] "format" \r\n",(unsigned int)ret_val,__FUNCTION__,__LINE__,##__VA_ARGS__);
+    #ifdef ENABLE_SVC_LP_DBG_LOGS
+        #define cy_svc_log_dbg(format,...)  cy_log_msg (CYLF_MIDDLEWARE,CY_LOG_INFO,"[SLP] "format" \r\n",##__VA_ARGS__);
+    #endif
 #else
-#define cy_svc_log_info(format,...)
-#define cy_svc_log_err(format,...)
-#define cy_svc_log_err_on_no_isr(format,...)
-#define cy_svc_log_dbg(format,...)
+    #define cy_svc_log_info(format,...)
+    #define cy_svc_log_err(format,...)
+    #define cy_svc_log_err_on_no_isr(format,...)
+#endif
+
+#ifndef ENABLE_SVC_LP_DBG_LOGS
+    #define cy_svc_log_dbg(format,...)
 #endif
 
 #define SVC_PROCESS_THREAD_NAME              "svc_lp_thread"
@@ -392,6 +399,9 @@ typedef struct
      */
     volatile bool is_deinit_done;
 
+    /**
+     * Flag to indicate if API set is allowed
+     */
     volatile bool api_set_allowed;
 
     /**
@@ -443,7 +453,11 @@ typedef struct
      */
     cy_sod_t sod_handle;
 
+    /* SOD detected or not */
     bool sod_detected;
+
+    /* SOD redetect count */
+    uint32_t sod_redetect_count;
 
     /**
      * Circular buffer information
@@ -523,6 +537,11 @@ typedef struct
     cy_svc_set_state_t set_state_last_dbg;
 
     volatile cy_svc_lp_hp_state_t svc_hp_state;
+
+    /**
+     * Gain configuration structure for low power domain.
+     */
+    cy_svc_lp_gain_config_t gain_config;
 
 } svc_lp_instance_t;
 

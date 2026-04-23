@@ -19,22 +19,31 @@ const bool SVC_MODEL_DUAL_WAKEWORD_ENABLED = false;
 #endif
 
 
-
+#ifdef ENABLE_IFX_LPWWD_HMMS
 const int16_t ppkwmodel1_input[] = {
 #include "OK_INFINEON_2023-10-14_pp_kw_hmm_int8_nn.h"
-		};
+        };
 const int16_t ppgmodel1_input[] = {
 #include "OK_INFINEON_2023-10-14_pp_g_hmm_int8_nn.h"
-		};
+        };
 const int16_t ppnmodel1_input[] = {
 #include "OK_INFINEON_2023-10-14_pp_n_hmm_int8_nn.h"
-		};
+        };
 
 const char *SVC_MODEL_HMM_KEYWORD_1 = (const char*) ppkwmodel1_input;
 const char *SVC_MODEL_HMM_GARBAGE_1 = (const char*) ppgmodel1_input;
 const char *SVC_MODEL_HMM_NOISE_1 = (const char*) ppnmodel1_input;
 
+
 const char *SVC_MODEL_HMM_KEYWORD_2 = NULL;
 const char *SVC_MODEL_HMM_GARBAGE_2 = NULL;
 const char *SVC_MODEL_HMM_NOISE_2 = NULL;
+#else
+    const int32_t lpwwd_pp_config_params[] = {
+        #include "OK_INFINEON_LPWWD_PP_parms.h"
+    };
+
+    const int32_t* SVC_MODEL_LPWWD_PP_CONFIG_PARAMS = (const int32_t*)lpwwd_pp_config_params;
+#endif /* ENABLE_IFX_LPWWD_HMMS */
+
 

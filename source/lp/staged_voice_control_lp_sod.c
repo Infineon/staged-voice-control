@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -40,7 +40,7 @@
 #include "staged_voice_control_lp_hpwwd.h"
 #include "staged_voice_control_lp_private.h"
 #include "staged_voice_control_lp_low_noise.h"
-
+#include "staged_voice_control_lp_gain.h"
 /*******************************************************************************
  *                              Macros
  ******************************************************************************/
@@ -125,16 +125,13 @@ cy_rslt_t svc_lp_sod_process(svc_lp_instance_t *lp_instance, uint8_t *data)
     cy_rslt_t ret_val = CY_RSLT_SVC_GENERIC_ERROR;
     bool b_speech_detect_required = false;
     cy_sod_status_t sod_status = CY_SOD_STATUS_INVALID;
+    int16_t audio_frame_temp[160]; // temporary audio frame for applying additional SOD mic gain
+    int16_t* sod_processing_gain_ptr = NULL;
 
-#ifdef ENABLE_SOD_REDETECT_ON_LPWWD
     if ((CY_SVC_STAGE_WAITING_FOR_SPEECH_ONSET_DETECTION
             == lp_instance->current_stage)
             || (CY_SVC_STAGE_WAITING_FOR_LOW_POWER_WAKEUP_WORD_DETECTION
                     == lp_instance->current_stage))
-#else
-    if ((CY_SVC_STAGE_WAITING_FOR_SPEECH_ONSET_DETECTION
-                == lp_instance->current_stage))
-#endif
     {
         b_speech_detect_required = true;
     }
@@ -153,9 +150,30 @@ cy_rslt_t svc_lp_sod_process(svc_lp_instance_t *lp_instance, uint8_t *data)
 #ifdef ENABLE_SVC_LP_CHECK_POINT
     SVC_LP_CHECK_POINT();
 #endif
+
+    if(lp_instance->gain_config.sod_processing_gain > 1)
+    {
+        /* Apply post HPF gain with clipping */
+        ret_val = svc_lp_apply_gain_with_clip(lp_instance->gain_config.sod_processing_gain, (int16_t*)data, audio_frame_temp, MONO_FRAME_SIZE);
+        if(ret_val != CY_RSLT_SUCCESS)
+        {
+            cy_svc_log_err(ret_val,"Post HPF gain application failed");
+            // not returning here, continue with original data
+            sod_processing_gain_ptr = (int16_t*)data;
+        }
+        else
+        {
+            sod_processing_gain_ptr = (int16_t*)audio_frame_temp;
+        }
+    }
+    else
+    {
+        sod_processing_gain_ptr = (int16_t*)data;
+    }
+
     ret_val = cy_sod_process(lp_instance->sod_handle,
             b_speech_detect_required,
-            (int16_t*) data,
+            sod_processing_gain_ptr,
             &sod_status);
 #ifdef ENABLE_SVC_LP_CHECK_POINT
     SVC_LP_CHECK_POINT();
@@ -166,9 +184,10 @@ cy_rslt_t svc_lp_sod_process(svc_lp_instance_t *lp_instance, uint8_t *data)
         if (CY_SOD_STATUS_DETECTED == sod_status)
         {
             /**
-             * First time Speech detected.
+             * Fresh Speech detected, set the SOD detected flag to true and reset the SOD re-detect count.
              */
             lp_instance->sod_detected = true;
+            lp_instance->sod_redetect_count = 0;
 
             (void) svc_lp_trigger_state(lp_instance,
                     SVC_TRIGGER_SPEECH_ONSET_DETECTED);
@@ -178,8 +197,8 @@ cy_rslt_t svc_lp_sod_process(svc_lp_instance_t *lp_instance, uint8_t *data)
                     SVC_TRIGGER_SPEECH_ONSET_DETECTED);
 #endif
 
-            cy_svc_log_dbg("SOD DETD [%p,Cnt:%d]", data,
-                    lp_instance->stats.sod_detect_counter_dbg);
+            cy_svc_log_dbg("SOD DETD [%p,Cnt:%d, Frame:%d]", data,
+                    lp_instance->stats.sod_detect_counter_dbg, lp_instance->stats.frame_counter_received_after_last_aad_dbg);
 
 #ifdef SIMULATE_SOD_IPC_TRIGGER_TEST
             svc_lp_app_ipc_send_command_to_trigger_event_from_hp(
@@ -209,39 +228,30 @@ cy_rslt_t svc_lp_sod_process(svc_lp_instance_t *lp_instance, uint8_t *data)
     {
         if(CY_SOD_STATUS_DETECTED == sod_status )
         {
-
+            lp_instance->sod_redetect_count++;
+#if 0
             (void) svc_lp_trigger_state(lp_instance,
                     SVC_TRIGGER_SPEECH_ONSET_DETECTED);
-
+#endif
 #ifdef ENABLE_TIMELINE_MARKER
             (void) svc_lp_trigger_audio_timeline_marker_update(
                     SVC_TRIGGER_SPEECH_ONSET_DETECTED);
 #endif
 
-            cy_svc_log_dbg("SOD REDETD, Addr:%p,Cnt:%d", data,
-                    lp_instance->stats.sod_detect_counter_dbg);
-        }
-        else if(CY_SOD_STATUS_INPUT_DATA_PROCESSED == sod_status )
-        {
-            ;
-            //Nothing to be done for SOD onset not detected. SOD talks only
-            //about onset of a speech.
-        }
-        else
-        {
-            //Speech detection is not required.
-            ;
-        }
-        if (!(lp_instance->init_params.stage_config_list & CY_SVC_ENABLE_LPWWD))
-        {
-            if ((lp_instance->init_params.stage_config_list
-                    & CY_SVC_ENABLE_HPWWD_STATE_TRANSITIONS)
-                    || (lp_instance->init_params.stage_config_list
-                            & CY_SVC_ENABLE_ASR_STATE_TRANSITIONS))
+            cy_svc_log_dbg("SOD REDETD, Addr:%p,Cnt:%d, Frame:%d", data,
+                    lp_instance->stats.sod_detect_counter_dbg, lp_instance->stats.frame_counter_received_after_last_aad_dbg);
+
+            if (!(lp_instance->init_params.stage_config_list & CY_SVC_ENABLE_LPWWD))
             {
-                svc_lp_send_ipc_event_circular_buffer_update(lp_instance, data,
-                        lp_instance->circular_shared_buffer->frame_size_in_bytes,
-                        0, 0);
+                if ((lp_instance->init_params.stage_config_list
+                        & CY_SVC_ENABLE_HPWWD_STATE_TRANSITIONS)
+                        || (lp_instance->init_params.stage_config_list
+                                & CY_SVC_ENABLE_ASR_STATE_TRANSITIONS))
+                {
+                    svc_lp_send_ipc_event_circular_buffer_update(lp_instance, data,
+                            lp_instance->circular_shared_buffer->frame_size_in_bytes,
+                            0, 0);
+                }
             }
         }
     }
@@ -261,6 +271,9 @@ cy_rslt_t svc_lp_sod_process(svc_lp_instance_t *lp_instance, uint8_t *data)
 cy_rslt_t svc_lp_sod_reset (svc_lp_instance_t *lp_instance)
 {
     lp_instance->sod_detected = false;
+    lp_instance->sod_redetect_count = 0;
+
+    cy_svc_log_dbg("Reset: SOD [Frame:%d]",  lp_instance->stats.frame_counter_received_after_last_aad_dbg);
 
     return CY_RSLT_SUCCESS;
 }
@@ -315,6 +328,25 @@ cy_rslt_t cy_svc_lp_low_noise_config(cy_svc_lp_low_noise_config_t *low_noise_con
     bool enable_feature = low_noise_config->enable_feature;
 
     return svc_lp_low_noise_config(timeout_ms, aad_threshold, enable_feature);
+}
+
+uint32_t svc_lp_get_sod_redetection_count(void)
+{
+    svc_lp_instance_t *lp_instance = svc_lp_get_instance();
+    cy_svc_log_dbg("Get sod_redetect_count: %"PRIu32, lp_instance->sod_redetect_count);
+    return lp_instance->sod_redetect_count;
+}
+
+void svc_lp_decrement_sod_redetection_count(void)
+{
+    svc_lp_instance_t *lp_instance = svc_lp_get_instance();
+
+    if(lp_instance->sod_redetect_count>0)
+    {
+        lp_instance->sod_redetect_count--;
+        cy_svc_log_dbg("Decremented sod_redetect_count After value: %"PRIu32, lp_instance->sod_redetect_count);
+    }
+
 }
 
 

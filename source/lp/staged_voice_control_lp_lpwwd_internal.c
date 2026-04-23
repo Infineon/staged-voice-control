@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -121,9 +121,10 @@ static cy_rslt_t svc_lp_lpwwd_internal_process_detect_result(
             svc_lp_start_circular_buf_update_on_transition_to_hp(lp_instance,
                     data, SVC_TRIGGER_LOW_POWER_WAKEUP_WORD_DETECTED);
 
-            cy_svc_log_dbg("LPWWD DETD [Addr:%p,DET:%d:NDET:%d]", data,
+            cy_svc_log_dbg("LPWWD DETD [Addr:%p,DET:%d:NDET:%d:Frame:%d]", data,
                     lp_instance->stats.lpwwd_detect_counter_dbg,
-                    lp_instance->stats.lpwwd_not_detect_counter_dbg);
+                    lp_instance->stats.lpwwd_not_detect_counter_dbg,
+                    lp_instance->stats.frame_counter_received_after_last_aad_dbg);
             break;
         }
 
@@ -161,13 +162,14 @@ cy_rslt_t svc_lp_lpwwd_internal_init(
     config_params.ml_model_binary_buf = SVC_MODEL_BINARY_BUFFER;
 #endif
 
+#ifdef ENABLE_IFX_LPWWD_HMMS
     config_params.hmm_model1_keyword_binary_buf = SVC_MODEL_HMM_KEYWORD_1;
     config_params.hmm_model1_garbage_binary_buf =  SVC_MODEL_HMM_GARBAGE_1;
     config_params.hmm_model1_noise_binary_buf = SVC_MODEL_HMM_NOISE_1;
     config_params.hmm_model2_keyword_binary_buf = SVC_MODEL_HMM_KEYWORD_2;
     config_params.hmm_model2_garbage_binary_buf =  SVC_MODEL_HMM_GARBAGE_2;
     config_params.hmm_model2_noise_binary_buf = SVC_MODEL_HMM_NOISE_2;
-
+#endif /* ENABLE_IFX_LPWWD_HMMS */
     /* Read feature scale and feature offset from model itself, So assigning zeros*/
     config_params.feature_scale = 0;
     config_params.feature_offset = 0;

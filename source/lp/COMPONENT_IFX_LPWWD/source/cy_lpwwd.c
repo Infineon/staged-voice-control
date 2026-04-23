@@ -148,27 +148,27 @@ extern unsigned int  svc_lp_stats_get_feed_counter(void);
 static void print_wwd_detection_result(cy_lpwwd_context_t *lpwwd_context,
         cy_lpwwd_wwd_detect_status_t *wwd_status)
 {
-    extern int hmm_pp_detections;
-    extern int hmm_pp_kwrejections;
-    extern int hmm_pp_rejections;
-    extern int hmm_pp_sptimeouts;
-    extern int hmm_pp_ntimeouts;
-    extern int hmm_pp_other_cases;
-//    extern int hmm_pp_no_decisions;
+    extern int pp_detections;
+    extern int pp_kwrejections;
+    extern int pp_rejections;
+    extern int pp_sptimeouts;
+    extern int pp_ntimeouts;
+    extern int pp_other_cases;
+//    extern int pp_no_decisions;
 
     cy_lpwwd_log_info("[%s]->stats[%d,%d,%d,%d,%d,%d,%d,%d]",
-            get_print_detection_str(wwd_status), hmm_pp_detections,
-            hmm_pp_kwrejections, hmm_pp_rejections, hmm_pp_sptimeouts,
-            hmm_pp_ntimeouts, hmm_pp_other_cases,
+            get_print_detection_str(wwd_status), pp_detections,
+            pp_kwrejections, pp_rejections, pp_sptimeouts,
+            pp_ntimeouts, pp_other_cases,
 			svc_lp_stats_get_feed_counter(),
             lpwwd_context->audio_frame_count)
 
-    ((void)(hmm_pp_detections));
-    ((void)(hmm_pp_kwrejections));
-    ((void)(hmm_pp_rejections));
-    ((void)(hmm_pp_sptimeouts));
-    ((void)(hmm_pp_ntimeouts));
-    ((void)(hmm_pp_other_cases));
+    ((void)(pp_detections));
+    ((void)(pp_kwrejections));
+    ((void)(pp_rejections));
+    ((void)(pp_sptimeouts));
+    ((void)(pp_ntimeouts));
+    ((void)(pp_other_cases));
 }
 
 static cy_rslt_t cy_lpwwd_validate_init_params(cy_lpwwd_config_params_t *config_params)
@@ -210,6 +210,7 @@ static cy_rslt_t cy_lpwwd_validate_init_params(cy_lpwwd_config_params_t *config_
 #endif
 #endif
 
+#ifdef ENABLE_IFX_LPWWD_HMMS
 #ifndef HMMS_CONFIG_MODEL
     if((NULL == config_params->hmm_model1_keyword_binary_buf) ||
             (NULL == config_params->hmm_model1_garbage_binary_buf) ||
@@ -222,6 +223,7 @@ static cy_rslt_t cy_lpwwd_validate_init_params(cy_lpwwd_config_params_t *config_
                 config_params->hmm_model1_noise_binary_buf);
         return result;
     }
+#endif
 #endif
 
     if(true == config_params->dual_wake_word_detection)

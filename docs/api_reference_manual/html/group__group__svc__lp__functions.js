@@ -9,5 +9,7 @@ var group__group__svc__lp__functions =
     [ "cy_svc_lp_ipc_pre_send_hook", "group__group__svc__lp__functions.html#ga93c6e9d3aa2624c70c41c1b2232d37ab", null ],
     [ "cy_svc_lp_ipc_post_send_hook", "group__group__svc__lp__functions.html#gad4b642803cd91390d7477e6286c12acc", null ],
     [ "cy_svc_lp_ipc_post_recv_hook", "group__group__svc__lp__functions.html#ga8a769fdf715aecbbdf143af0a9773de4", null ],
-    [ "cy_svc_lp_low_noise_config", "group__group__svc__lp__functions.html#ga024e9824090e13fb703d5fb68bb28c96", null ]
+    [ "cy_svc_lp_thread_start_hook", "group__group__svc__lp__functions.html#gaf2bb44e46629dce38c4cd3b62f1886a1", null ],
+    [ "cy_svc_lp_low_noise_config", "group__group__svc__lp__functions.html#ga024e9824090e13fb703d5fb68bb28c96", null ],
+    [ "cy_svc_lp_gain_config", "group__group__svc__lp__functions.html#ga10524a88d8b2f99b99f9087855419e1b", null ]
 ];

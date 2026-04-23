@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -51,6 +51,7 @@ extern const char *SVC_MODEL_HMM_KEYWORD_2;
 extern const char *SVC_MODEL_HMM_GARBAGE_2;
 extern const char *SVC_MODEL_HMM_NOISE_2;
 extern const bool  SVC_MODEL_DUAL_WAKEWORD_ENABLED;
+extern const int32_t* SVC_MODEL_LPWWD_PP_CONFIG_PARAMS;
 
 #endif
 

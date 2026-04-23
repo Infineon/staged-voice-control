@@ -1,5 +1,5 @@
 /*
- * (c) 2025, Infineon Technologies AG, or an affiliate of Infineon
+ * (c) 2026, Infineon Technologies AG, or an affiliate of Infineon
  * Technologies AG. All rights reserved.
  * This software, associated documentation and materials ("Software") is
  * owned by Infineon Technologies AG or one of its affiliates ("Infineon")
@@ -40,7 +40,7 @@
 /*******************************************************************************
  *                              Macros
  ******************************************************************************/
-
+#define CY_SVC_SOD_HIT_LATE_DELAY_MS (650)
 /*******************************************************************************
  *                              Constants
  ******************************************************************************/
@@ -77,6 +77,18 @@ svc_lp_instance_t* svc_lp_get_instance(void)
 }
 
 /**
+ * Weak hook function called when SVC LP thread starts.
+ * Applications can override this function to add custom initialization.
+ *
+ * @param[in]  lp_instance             Staged voice control module instance
+ */
+
+__WEAK void cy_svc_lp_thread_start_hook(void)
+{
+    // printf("%s %d>\n",__FUNCTION__,__LINE__);
+}
+
+/**
  * stage voice thread process function
  *
  * @param[in]  thread_input             argument to thread.
@@ -103,6 +115,7 @@ static void svc_lp_thread_func(cy_thread_arg_t thread_input)
 #endif
 
         cy_svc_log_info("proc SVC thread proc started");
+        cy_svc_lp_thread_start_hook();
 
         while (false == lp_instance->quit_thread_instance)
         {
@@ -238,7 +251,7 @@ static cy_rslt_t svc_lp_validate_init_params(
 
     if(init->stage_config_list & CY_SVC_ENABLE_SOD)
     {
-        if (init->sod_onset_detect_max_late_hit_delay_ms > CY_MAX_SOD_HIT_LATE_DELAY_MS)
+        if (init->sod_onset_detect_max_late_hit_delay_ms > CY_SVC_SOD_HIT_LATE_DELAY_MS)
         {
             cy_svc_log_err(ret_val, "Invalid SOD hit delay:%d",
                     init->sod_onset_detect_max_late_hit_delay_ms);

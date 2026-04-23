@@ -1,6 +1,6 @@
 // This file is generated. Do not edit.
-// Generated on: 10.01.2025 08:47:26
-// Build version: 3.0.0.13974
+// Generated on: 31.03.2026 09:25:30
+// Build version: 3.2.0.16398
 
 #ifndef HEY_GOOGLE_INT8_GEN_H
 #define HEY_GOOGLE_INT8_GEN_H
@@ -11,8 +11,8 @@
 extern "C" {
 #endif  // __cplusplus
 
-#define HEY_GOOGLE_INT8_MODEL_CONST_DATA_SIZE 131426
-#define HEY_GOOGLE_INT8_MODEL_INIT_DATA_SIZE 576
+#define HEY_GOOGLE_INT8_MODEL_CONST_DATA_SIZE 131442
+#define HEY_GOOGLE_INT8_MODEL_INIT_DATA_SIZE 4708
 #define HEY_GOOGLE_INT8_MODEL_UNINIT_DATA_SIZE 1396
 
 
