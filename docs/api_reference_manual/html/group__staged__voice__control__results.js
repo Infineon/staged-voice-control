@@ -24,6 +24,5 @@ var group__staged__voice__control__results =
     [ "CY_RSLT_SVC_IPC_COUNTER_MISMATCH", "group__staged__voice__control__results.html#gaa2c240fc9591e23c74b463458d6fd53d", null ],
     [ "CY_RSLT_SVC_DATA_OVERWRITE_WARNING", "group__staged__voice__control__results.html#ga49a0e10811c79117ea9d621b9cd0497b", null ],
     [ "CY_RSLT_SVC_DEINIT_INIT_NOT_SUPPORTED", "group__staged__voice__control__results.html#gae7982ab7fd0120a0da38de164d122b92", null ],
-    [ "CY_RSLT_SVC_Q_FULL", "group__staged__voice__control__results.html#ga75476ee2754986ae45bf99be8f600bcf", null ],
-    [ "CY_RSLT_SVC_LICENSE_EXPIRED", "group__staged__voice__control__results.html#ga150732b49af4331feb20c2900a750c59", null ]
+    [ "CY_RSLT_SVC_Q_FULL", "group__staged__voice__control__results.html#ga75476ee2754986ae45bf99be8f600bcf", null ]
 ];

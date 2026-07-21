@@ -369,10 +369,14 @@ typedef struct
     /** Memory Callback to free memory back to the application. */
     cy_svc_lp_free_memory_callback_t  free_memory;
 
-
     /** InterCore shared buffer size */
     unsigned int inter_core_shared_buffer_size;
 
+    /** Mel filter bank low frequency */
+    int32_t mel_low_freq;
+
+    /** Mel filter bank high frequency */
+    int32_t mel_high_freq;
 
 } cy_svc_lp_config_t;
 

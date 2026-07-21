@@ -87,6 +87,8 @@ typedef struct {
     int number_of_filter_banks; // number of filter banks
     int number_of_dct_coefficients; // number of coefficients
     int audio_input_frame_size; // incoming audio frame size
+    int32_t mel_low_freq;   // Mel filter bank low frequency
+    int32_t mel_high_freq;  // Mel filter bank high frequency
 
 } cy_lpwwd_prewwd_config_params_t;
 

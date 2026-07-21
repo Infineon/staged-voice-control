@@ -234,6 +234,15 @@ typedef struct {
      */
     int lookback_buffer_length;
 
+    /**
+     * Mel filter bank low frequency
+     */
+    int32_t mel_low_freq;
+    /**
+     * Mel filter bank high frequency
+     */
+    int32_t mel_high_freq;
+
 } cy_lpwwd_config_params_t;
 
 /** \} group_lpwwd_structures */

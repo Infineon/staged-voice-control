@@ -175,6 +175,8 @@ cy_rslt_t svc_lp_lpwwd_internal_init(
     config_params.feature_offset = 0;
 
     config_params.lookback_buffer_length = init->sod_onset_detect_max_late_hit_delay_ms * 16000 / 1000;
+    config_params.mel_low_freq = init->mel_low_freq;
+    config_params.mel_high_freq = init->mel_high_freq;
 
     cy_svc_log_info("InitLPWWD[%d,%p,%p,%p,%p,%p,%p,%p,%p, %f,%d,%d]",
     		config_params.dual_wake_word_detection,

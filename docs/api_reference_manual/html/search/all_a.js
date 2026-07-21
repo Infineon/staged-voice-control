@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['post_5fhpf_5fgain_0',['post_hpf_gain',['../structcy__svc__lp__gain__config__t.html#ac7771407fa8fc10c6157ce9043904a86',1,'cy_svc_lp_gain_config_t']]],
-  ['post_5fwwd_5fframe_5fcount_1',['post_wwd_frame_count',['../structcy__svc__hp__set__state__hpwwd__det__in__prog__info__t.html#a62c29d5904f29e241abd59098f2895b9',1,'cy_svc_hp_set_state_hpwwd_det_in_prog_info_t']]],
-  ['pre_5froll_5fframe_5fcount_5ffrom_5flpwwd_5fdetect_5fframe_2',['pre_roll_frame_count_from_lpwwd_detect_frame',['../structcy__svc__lp__config__t.html#a036bb1ba3d2b9e8bc050c5ebdda8cc09',1,'cy_svc_lp_config_t']]]
+  ['high_20performance_20core_0',['Code Snippet 2: Initialize SVC middleware on high performance core',['../index.html#snip2',1,'']]],
+  ['hp_5fpipe_5fend_5fpoint_5faddress_1',['hp_pipe_end_point_address',['../structcy__svc__ipc__pipe__configuration__t.html#a2c497a57231f758fb426282c85712466',1,'cy_svc_ipc_pipe_configuration_t']]],
+  ['hp_5fpipe_5fend_5fpoint_5fclient_5fid_2',['hp_pipe_end_point_client_id',['../structcy__svc__ipc__pipe__configuration__t.html#ac9647bcb2d278b064f3e35a51f367ec3',1,'cy_svc_ipc_pipe_configuration_t']]],
+  ['hp_5fpipe_5fend_5fpoint_5fintr_5fmask_3',['hp_pipe_end_point_intr_mask',['../structcy__svc__ipc__pipe__configuration__t.html#a75eea050652af07d3c0aab8d1e28551f',1,'cy_svc_ipc_pipe_configuration_t']]]
 ];

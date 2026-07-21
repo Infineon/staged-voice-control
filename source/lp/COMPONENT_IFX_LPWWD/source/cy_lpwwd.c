@@ -345,6 +345,8 @@ cy_rslt_t cy_lpwwd_init(cy_lpwwd_config_params_t *config_params,
     lpwwd_context->prewwd_config.number_of_filter_banks = NUM_FBANK_BINS;
     lpwwd_context->prewwd_config.sampling_rate = SAMPLE_RATE;
     lpwwd_context->prewwd_config.audio_input_frame_size = MONO_FRAME_SIZE;
+    lpwwd_context->prewwd_config.mel_low_freq = config_params->mel_low_freq;
+    lpwwd_context->prewwd_config.mel_high_freq = config_params->mel_high_freq;
 
     lpwwd_context->postwwd_config.sampling_rate = SAMPLE_RATE;
     lpwwd_context->postwwd_config.frame_rate = NN_FRAME_RATE;

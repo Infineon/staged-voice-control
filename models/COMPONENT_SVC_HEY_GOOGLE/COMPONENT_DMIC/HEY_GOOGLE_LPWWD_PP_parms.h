@@ -11,7 +11,7 @@
 10, //parameter for count1 threshold
 0, //parameter for count2 threshold
 0, //parameter for count3 threshold
-45, //parameter for gap0 threshold
-22, //parameter for gap1 threshold
+20, //parameter for gap0 threshold
+10, //parameter for gap1 threshold
 0, //parameter for gap2 threshold
 0, //parameter for gap3 threshold

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['generic_20audio_20pipeline_20_26_20components_20overview_0',['Generic audio pipeline &amp; components overview',['../index.html',1,'']]]
+  ['audio_20pipeline_20components_20overview_0',['Generic audio pipeline &amp; components overview',['../index.html',1,'']]]
 ];

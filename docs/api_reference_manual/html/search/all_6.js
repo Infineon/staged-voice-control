@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['hp_5fpipe_5fend_5fpoint_5faddress_0',['hp_pipe_end_point_address',['../structcy__svc__ipc__pipe__configuration__t.html#a2c497a57231f758fb426282c85712466',1,'cy_svc_ipc_pipe_configuration_t']]],
-  ['hp_5fpipe_5fend_5fpoint_5fclient_5fid_1',['hp_pipe_end_point_client_id',['../structcy__svc__ipc__pipe__configuration__t.html#ac9647bcb2d278b064f3e35a51f367ec3',1,'cy_svc_ipc_pipe_configuration_t']]],
-  ['hp_5fpipe_5fend_5fpoint_5fintr_5fmask_2',['hp_pipe_end_point_intr_mask',['../structcy__svc__ipc__pipe__configuration__t.html#a75eea050652af07d3c0aab8d1e28551f',1,'cy_svc_ipc_pipe_configuration_t']]]
+  ['data_20to_20svc_20middleware_0',['Code Snippet 3: Feed audio data to SVC middleware',['../index.html#snip3',1,'']]],
+  ['data_5fcallback_1',['data_callback',['../structcy__svc__hp__config__t.html#a37537fdfb57da0605b2d1c2a953f4440',1,'cy_svc_hp_config_t']]],
+  ['different_20stage_2',['Code Snippet 4: Forcefully transition to different stage',['../index.html#snip4',1,'']]]
 ];

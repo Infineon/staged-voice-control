@@ -51,12 +51,6 @@ var group__group__svc__common__enums =
       [ "CY_SVC_SET_STATE_ASR_NOT_DETECTED", "group__group__svc__common__enums.html#gga269b6a641a33542ee6b37425a31684d0aa0be543c59c9d505c4d16307232e6f5b", null ],
       [ "CY_SVC_SET_STATE_ASR_PROCESSING_COMPLETED", "group__group__svc__common__enums.html#gga269b6a641a33542ee6b37425a31684d0a2c4b3d98efb69037c3cd81865e08d017", null ]
     ] ],
-    [ "cy_svc_lp_set_hp_core_info_t", "group__group__svc__common__enums.html#ga9d9e7a2bf316cf514a2a922cb9a5d4ff", [
-      [ "CY_SVC_HP_CORE_INFO_INVALID", "group__group__svc__common__enums.html#gga9d9e7a2bf316cf514a2a922cb9a5d4ffae3b6adff1e0d52007bd2e11b8e1ab20d", null ],
-      [ "CY_SVC_BEFORE_HP_CORE_ENABLE", "group__group__svc__common__enums.html#gga9d9e7a2bf316cf514a2a922cb9a5d4ffadc77503f8fe6a6edc479dd85b72748ae", null ],
-      [ "CY_SVC_BEFORE_HP_CORE_DISABLE", "group__group__svc__common__enums.html#gga9d9e7a2bf316cf514a2a922cb9a5d4ffa0734fac9a8044dbe7317e912a1c55bde", null ],
-      [ "CY_SVC_HP_CORE_INFO_MAX", "group__group__svc__common__enums.html#gga9d9e7a2bf316cf514a2a922cb9a5d4ffa79e9ef92aace8062002ff1c12d9fee56", null ]
-    ] ],
     [ "cy_svc_buffer_info_t", "group__group__svc__common__enums.html#ga7e4b569479195014e53c8ac23ea933b6", [
       [ "CY_SVC_BUF_INFO_PREROLL_INSUFFICIENT_BUF", "group__group__svc__common__enums.html#gga7e4b569479195014e53c8ac23ea933b6a8f9866dcc096256f271679adf0a01228", null ],
       [ "CY_SVC_BUF_INFO_WWD_IDENTIFIED", "group__group__svc__common__enums.html#gga7e4b569479195014e53c8ac23ea933b6ad291a76f9c10f103f7fac33c3c9ecde6", null ],

@@ -108,13 +108,16 @@ cy_rslt_t cy_lpwwd_prewwd_init(cy_lpwwd_prewwd_config_params_t *config_params,
     fe_config.number_of_dct_coefficients =
             config_params->number_of_dct_coefficients;
     fe_config.audio_frame_size = config_params->audio_input_frame_size;
+    fe_config.mel_low_freq = (float)config_params->mel_low_freq;
+    fe_config.mel_high_freq = (float)config_params->mel_high_freq;
 
     cy_lpwwd_prewwd_log_info(
-            "cy_fe_init:SR:%d,FSz:%d,CId:%d,FSft:%d,FBank:%d,Dct:%d,ASz:%d",
+            "cy_fe_init:SR:%d,FSz:%d,CId:%d,FSft:%d,FBank:%d,Dct:%d,ASz:%d,MelLow:%d,MelHigh:%d",
             fe_config.sampling_rate, fe_config.frame_size,
             fe_config.component_id, fe_config.frame_shift,
             fe_config.number_of_filter_banks,
-            fe_config.number_of_dct_coefficients, fe_config.audio_frame_size);
+            fe_config.number_of_dct_coefficients, fe_config.audio_frame_size,
+            fe_config.mel_low_freq, fe_config.mel_high_freq);
 
     status = cy_fe_init(&fe_config, &fe_handle);
     if (status != CY_RSLT_SUCCESS)

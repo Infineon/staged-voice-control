@@ -1,5 +1,5 @@
 // This file is generated. Do not edit.
-// Generated on: 31.03.2026 09:44:00
+// Generated on: 24.04.2026 15:10:01
 // Build version: 3.2.0.16398
 
 #ifndef XIAODU_XIAODU_INT8_GEN_H

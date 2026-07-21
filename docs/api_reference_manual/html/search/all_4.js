@@ -1,4 +1,8 @@
 var searchData=
 [
-  ['free_5fmemory_0',['free_memory',['../structcy__svc__lp__config__t.html#acd7dd17b941dcfa5a733d4173818faab',1,'cy_svc_lp_config_t']]]
+  ['action_0',['action',['../structcy__svc__hp__set__state__asr__detected__info__t.html#ac51bfc33728c09bdd5171e07fa9e2cea',1,'cy_svc_hp_set_state_asr_detected_info_t::action'],['../structcy__svc__hp__set__state__hpwwd__det__in__prog__info__t.html#a7a0779e690900857b0c89d240671948c',1,'cy_svc_hp_set_state_hpwwd_det_in_prog_info_t::action']]],
+  ['alloc_5fmemory_1',['alloc_memory',['../structcy__svc__lp__config__t.html#af89225125ca2d2161b7940f8f9e274e6',1,'cy_svc_lp_config_t']]],
+  ['audio_20data_20to_20svc_20middleware_2',['Code Snippet 3: Feed audio data to SVC middleware',['../index.html#snip3',1,'']]],
+  ['audio_20pipeline_20components_20overview_3',['Generic audio pipeline &amp; components overview',['../index.html',1,'']]],
+  ['audio_5finput_5ftype_4',['audio_input_type',['../structcy__svc__lp__config__t.html#a5edff89971ee48bcb703c5b33a9fe0f1',1,'cy_svc_lp_config_t']]]
 ];

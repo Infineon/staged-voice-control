@@ -25,14 +25,13 @@
 var NAVTREE =
 [
   [ "Staged voice control middleware library", "index.html", [
-    [ "Generic audio pipeline & components overview", "index.html", null ],
-    [ "API Reference", "modules.html", "modules" ]
+    [ "Generic audio pipeline & components overview", "index.html", null ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"group__group__svc__common__enums.html"
+"index.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';
